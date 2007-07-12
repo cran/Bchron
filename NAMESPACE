@@ -1,0 +1,8 @@
+useDynLib(Bchron)
+
+import(hdrcde, boa)
+
+export("calibrate","BchronMCMC","Bchronmenu","hdr2.den","PlotBchron","PlotDens","predictBchron")
+
+
+
