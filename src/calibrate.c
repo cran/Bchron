@@ -4,16 +4,18 @@
 #include<stdio.h>
 #include<time.h>
 
-void calibrate(char**CALPATH,char**INFILE,char**OUTFILE,int*ndets)
+void calibrate(char**CALPATH,char**INFILE,char**OUTFILE,int*ndets,int*BigCSize,double*LCal,double*HCal,int*iterat,int*burn,int*thin,int*howmny)
 {
 
 
 /////////////////////////////////// CONSTANTS ////////////////////////////////////
 // Some constants for reading stuff in
 // m=no of iterations, len is calcurve length
-int m=500000,BigCalSize=26006;
+int m=*iterat,BigCalSize=*BigCSize;
+double LowCal=*LCal, HighCal=*HCal;
+int IntLowCal = (int)(LowCal*1000);
 // howmany = how often to print out the number of iterations, thin = how many to thin it by :
-int howmany=50000,thinby=5,burnin=50000;
+int howmany=*howmny,thinby=*thin,burnin=*burn;
 
 ///////////////////////////// READ IN CALIBRATION CURVE /////////////////////////////
 
@@ -116,6 +118,8 @@ FILE *parameterfile;
 parameterfile = fopen(*OUTFILE,"w");
 
 Rprintf("Total number of iterations required: %i \n",m);
+Rprintf("Burn-in size: %i \n",burnin);
+Rprintf("Thinning by: %i \n",thinby);
 
 // Start iterations here 
 for (iter=0;iter<m;iter++)
@@ -163,23 +167,28 @@ for (iter=0;iter<m;iter++)
         } else {
 
      	//sample a new value from a distribution using function from random.c:
-		for(i=0;i<*ndets;i++) thetanew[i]= thetaall[i];
-		thetanew[q] = rnorm(thetaall[q],0.1);
+		thetanew[q] = rnorm(thetaall[q],runif(0.05,1));
         
         // Stop it from choosing bad values outside the range of BigCal
-        while((thetanew[q]< -0.005) | (thetanew[q] > 26)) thetanew[q] = rnorm(thetaall[q],0.1);
+        if(type[q]==1) while((thetanew[q]< LowCal) | (thetanew[q] > HighCal)) thetanew[q] = rnorm(thetaall[q],0.1);
 
         //if(iter % thinby == 0 &&  iter > burnin) Rprintf("%lf \n",thetanew[2]);     
 
 		//calculate old likelihood on first iteration:
         if(iter==0) 
         {
-           pixtheta[q] = dnorm(cage[q],BigC14[(int)(thetaall[q]*1000+0.5)+5],sqrt(pow(sd[q],2)+pow(BigSigma[(int)(thetaall[q]*1000+0.5)+5],2)),1);
+           pixtheta[q] = dnorm(cage[q],BigC14[(int)(thetaall[q]*1000+0.5)-IntLowCal],sqrt(pow(sd[q],2)+pow(BigSigma[(int)(thetaall[q]*1000+0.5)-IntLowCal],2)),1);
         }
 
         //calculate new likelihood:
-        piytheta[q] = dnorm(cage[q],BigC14[(int)(thetanew[q]*1000+0.5)+5],sqrt(pow(sd[q],2)+pow(BigSigma[(int)(thetanew[q]*1000+0.5)+5],2)),1);
-     
+        piytheta[q] = dnorm(cage[q],BigC14[(int)(thetanew[q]*1000+0.5)-IntLowCal],sqrt(pow(sd[q],2)+pow(BigSigma[(int)(thetanew[q]*1000+0.5)-IntLowCal],2)),1);
+        /*if(q==18) {
+            Rprintf("cage[q]=%lf, sd[q]=%lf, LowCal=%lf, HighCal=%lf, IntLowCal=%i \n",cage[q],sd[q],LowCal,HighCal,IntLowCal);
+            Rprintf("thetaall[q]=%lf, thetanew[q]=%lf,BigC14[thetaall[q]]=%lf,BigC14[thetanew[q]]=%lf \n",thetaall[q],thetanew[q],BigC14[(int)(thetaall[q]*1000+0.5)-IntLowCal],BigC14[(int)(thetanew[q]*1000+0.5)-IntLowCal]);
+            Rprintf("pixtheta[q]=%lf, piytheta[q]=%lf \n",pixtheta[q],piytheta[q]);
+        }*/
+       
+
 		//Update the thetas
         U = runif(0.0,1.0);
         if(U<exp(piytheta[q]-pixtheta[q])) thetaall[q] = thetanew[q];

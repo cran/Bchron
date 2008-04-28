@@ -1,42 +1,27 @@
 \name{Bchronmenu}
 \alias{Bchronmenu}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Main menu for Bchron }
+\title{ Walkthrough menu system for the Bchron package }
 \description{
-  A walk-through menu for accessing and running the entire Bchron package. 
-}
-\usage{
-Bchronmenu()
+ A walkthrough menu system for the Bchron package. Allows users the ability to load in data, run the 
+ Bchron MCMC model, run predictions and plots, and look at event ages. 
 }
 \details{
-The running of the Bchron package essentially occurs in 4 stages:
- 
-1. Load data
-
-2. MCMC model run
-
-3. Prediction
-
-4. Plotting
-
-
-The package also includes an option to calibrate radiocarbon dates ignoring any relationship between them
-but this is not a necessity for a run of the model, it is simply available for producing better graphics.
-
-In particular loading data needs to occur at the start of every session so option 1 in Bchronmenu should 
-always be chosen first. Other instructions and a walkthrough is in \code{\link{Bchron}}.
-
+ The Bchron menu system first creates a Bchrondata object with fields for the the input and output
+ files, the name of the core being used, the details of the calibration curve, and details of the 
+ model run required. Using the menu system bypasses the need to create these objects. 
+} 
+\usage{ Bchronmenu() } 
+\author{
+Andrew Parnell <Andrew.Parnell@tcd.ie>
 }
-\value{
-  No value is produced, though plots and file output is created through the use of the menus.
+\references{
+Haslett and Parnell (2008), A simple monotone process with application to radiocarbon-dated depth chronologies.
+Applied Statistics 57 (5), 1--20.
 }
-\references{Haslett and Parnell (2007; submitted to JRSSC) }
-\author{Andrew Parnell }
-
-\examples{
-    ## Bchronmenu()    
-}
+\seealso{ \code{\link{Bchronloaddata}}, \code{\link{Bchronquickload}}}
+\keyword{dplot}
 \keyword{programming}
 \keyword{models}
 \keyword{nonparametric}
 \keyword{smooth}
+\keyword{package}

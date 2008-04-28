@@ -1,8 +1,8 @@
 useDynLib(Bchron)
 
-import(hdrcde, boa)
+import(coda, hdrcde)
 
-export("calibrate","BchronMCMC","Bchronmenu","hdr2.den","PlotBchron","PlotDens","predictBchron")
+export("Bchroncalibrate","Bchronloaddata","Bchronmenu","Bchronpredict","Bchronpredictevent","Bchronplotter","Bchronplotevent","BchronMCMC","newgraphwindow","hdr2.den","Bchronquickload","Bchronchangecalcurve","Bchroncheck","Bchronplotdens","Bchronconvergecheck")
 
 
 

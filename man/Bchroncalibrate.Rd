@@ -1,11 +1,11 @@
-\name{BchronMCMC}
-\alias{BchronMCMC}
-\title{ Run Bchron model with MCMC }
+\name{Bchroncalibrate}
+\alias{Bchroncalibrate}
+\title{ Unrestricted radiocarbon calibration of Bchron data }
 \description{
-  Runs the compound Poisson-Gamma model for radiocarbon and non-radiocarbon dates
+  Runs standard radiocarbon calibration of determinations with no restrictions on their ordering.
 }
 \usage{
-BchronMCMC(Bchrondata, iterations = 0, burnin = 0, thinby = 1, howmany = 1)
+Bchroncalibrate(Bchrondata, iterations = 5e+05, burnin = 50000, thinby = 5, howmany = 50000)
 }
 \arguments{
   \item{Bchrondata}{ A Bchron data object with fields for the the input and output
@@ -16,16 +16,11 @@ BchronMCMC(Bchrondata, iterations = 0, burnin = 0, thinby = 1, howmany = 1)
   \item{thinby}{ Number of iterations to thin out. }
   \item{howmany}{ Number of iterations before R reports back and updates the screen. }
 }
-\details{
-    The Bchron MCMC function fits a compound Poisson-Gamma distribution to the increments between the dated levels. 
-    This involves a stochastic linear interpolation where the age gaps are Gamma(2,beta) distributed, and the 
-    depth gaps are Exponential(lambda). Radiocarbon dates are updated within the function also by MCMC. 
-}
 \references{
 Haslett and Parnell (2008), A simple monotone process with application to radiocarbon-dated depth chronologies.
 Applied Statistics 57 (5), 1--20.
 }
-\seealso{ \code{\link{Bchronloaddata}} }
+\seealso{ \code{\link{BchronMCMC}} }
 \keyword{dplot}
 \keyword{programming}
 \keyword{models}

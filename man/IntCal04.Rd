@@ -1,12 +1,12 @@
-\name{BigCal}
+\name{IntCal04}
 \docType{data}
-\alias{BigCal}
+\alias{IntCal04}
 \alias{Calibration}
 \title{Interpolated Northern hemisphere Intcal04 calibration curve}
 \description{
 A two column file giving the radiocarbon age and standard error for every calendar year starting at -5 years BP (AD1955)
 }
-\usage{BigCal}
+\usage{IntCal04}
 \format{A two column matrix containing 26006 observations}
 \source{Intcal04}
 \references{

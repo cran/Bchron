@@ -363,40 +363,31 @@ void ReOrder(double *currentdepths,double *cage,double *sd,double *depth,double 
 // This function takes the current depths when they are not in order and places
 // everything back in the right order
 
-int Rank[ndets];
-int sorteddepths[ndets];
-double sorteddepths2[ndets];
+int Order[ndets];
+double sorteddepths[ndets];
 double currentdepthst[ndets],caget[ndets],sdt[ndets],thickt[ndets],outprob1t[ndets];
 double deptht[ndets],outprob2t[ndets],typet[ndets];
-int i,j;
+int i;
 
 // First create sorted depths
 for(i=0;i<ndets;i++) {
-    sorteddepths2[i] = (currentdepths[i]*100000);
-    sorteddepths[i] = (int)sorteddepths2[i];
+    sorteddepths[i] = currentdepths[i];
+    Order[i]=i;
 }
 
 // Now sort
-qsort(sorteddepths, ndets, sizeof(int), compare);
-
-// Now get the rank order
-for(i=0;i<ndets;i++) {
-    for(j=0;j<ndets;j++) {
-        if((int)(currentdepths[i]*100000) == sorteddepths[j]) {
-            Rank[i] = j;
-        }
-    }
-}
+//R_rsort(sorteddepths,ndets);
+R_qsort_I(sorteddepths,Order,1,ndets);
 
 for(i=0;i<ndets;i++) { 
-    currentdepthst[i] = currentdepths[Rank[i]];
-    caget[i] = cage[Rank[i]];
-    sdt[i] = sd[Rank[i]];
-    deptht[i] = depth[Rank[i]];
-    thickt[i] = thick[Rank[i]];
-    outprob1t[i] = outprob1[Rank[i]];
-    outprob2t[i] = outprob2[Rank[i]];
-    typet[i] = type[Rank[i]];
+    currentdepthst[i] = currentdepths[Order[i]];
+    caget[i] = cage[Order[i]];
+    sdt[i] = sd[Order[i]];
+    deptht[i] = depth[Order[i]];
+    thickt[i] = thick[Order[i]];
+    outprob1t[i] = outprob1[Order[i]];
+    outprob2t[i] = outprob2[Order[i]];
+    typet[i] = type[Order[i]];
 }
 
 for(i=0;i<ndets;i++) { 
@@ -410,7 +401,4 @@ for(i=0;i<ndets;i++) {
     type[i] = typet[i];
 }
 
-
 }
-
-

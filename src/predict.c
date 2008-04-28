@@ -24,6 +24,7 @@ void predict(char**PARFILE,char**DETSFILE,char**OUTFILE,int*ndets,char**DDEPTHFI
 char labcode[*ndets][50];
 double cage[*ndets],sd[*ndets],depth[*ndets],thick[*ndets],outprob1[*ndets],outprob2[*ndets];
 int type[*ndets]; 
+int howmany = 1000;
 
 FILE *dets;
 
@@ -182,7 +183,7 @@ if(pars==NULL) {
         OutlierSum2[k] +=flag2[k];
     }
 
-    if(i % 100==0) Rprintf("%i \n", *numchrons-i);
+    if(i % howmany==0) Rprintf("%i \n", *numchrons-i);
 
     // Get a new seed
     GetRNGstate();

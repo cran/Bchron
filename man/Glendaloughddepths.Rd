@@ -10,7 +10,8 @@ The task of the model is to estimate the calendar age of the core at these depth
 \usage{Glendaloughddepths}
 \format{A single column file with 150 rows}
 \references{
-Haslett and Parnell (2007, submitted to JRSSC)
+Haslett and Parnell (2008), A simple monotone process with application to radiocarbon-dated depth chronologies.
+Applied Statistics 57 (5), 1--20.
 }
 \keyword{datasets}
      
