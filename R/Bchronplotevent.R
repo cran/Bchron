@@ -19,9 +19,9 @@ if(choose == length(Bchrondata$eventnames)+1) {
       Bchronplotdens(Bchrondata$eventagefile[i],Bchrondata$fullname,Bchrondata$hdreventoutput[i],Bchrondata$eventfullnames[i],Bchrondata$version)
   }
 } else {
-
-Bchronplotdens(Bchrondata$eventagefile[choose], Bchrondata$fullname,
-      Bchrondata$hdreventoutput[choose],Bchrondata$eventfullnames[choose],Bchrondata$version)
+  Bchrondata$hdreventoutput[choose] <- paste(Bchrondata$path,"/Output/",Bchrondata$name,
+      "EventAges",Bchrondata$eventnames[choose],"HDRs.txt", sep = "")
+  Bchronplotdens(Bchrondata$eventagefile[choose],Bchrondata$fullname,Bchrondata$hdreventoutput[choose],Bchrondata$eventfullnames[choose],Bchrondata$version)
 }
 
 cat("\n")

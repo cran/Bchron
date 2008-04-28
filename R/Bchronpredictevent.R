@@ -68,7 +68,7 @@ for(i in 1:numevents) {
       Bchrondata$eventnames[i] <- evname
       Bchrondata$eventfullnames[i] <- evfullname
     } else {
-      cat(paste(Bchrondata$path, "/Input/", Bchrondata$name, "EventDepths",evname, ".txt \n"),sep="")
+      cat(paste(Bchrondata$path, "/Input/", Bchrondata$name, "EventDepths",evname, ".txt \n",sep=""))
       cat("File cannot be found. \n")
     }
   }

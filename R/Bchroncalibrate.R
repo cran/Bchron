@@ -1,4 +1,4 @@
-Bchroncalibrate <- function(Bchrondata,iterations=500000,burnin=50000,thinby=5,howmany=50000) {
+Bchroncalibrate <- function(Bchrondata,iterations=500000,burnin=50000,thinby=45,howmany=50000) {
 
 cat("Calibrating radiocarbon dates... \n")
 if (Bchrondata$SHOULDRUN == FALSE) {
@@ -23,6 +23,30 @@ if(file.exists(Bchrondata$calibdatesfile)) {
   while(length(rerun)==0) rerun <- scan(what = "", nlines = 1, quiet = TRUE)
   if(rerun=="n" || rerun=="no") return(Bchrondata)
 }
+
+cat("============================================================================\n")
+cat("WARNING: running calibration here will over-write previous calibration runs. \n")
+cat("============================================================================\n")
+cat("Select 0 to exit this menu. \n")
+choices2 <- c("standard", "long", "super-long")
+choose2 <- menu(choices2, title = "What type of Bchron model run would you like?")
+iterations <- 500000
+burnin <- 50000
+howmany <- 50000
+thinby <- 45
+if(choose2 == 2) {
+    iterations <- 1e+06
+    burnin <- 200000
+    howmany <- 50000
+    thinby <- 80
+}
+if (choose2 == 3) {
+    iterations <- 2e+06
+    burnin <- 400000
+    howmany <- 50000
+    thinby <- 160
+}
+if(choose2 == 0) return(Bchrondata)
 
 cat("Calibration curve at", Bchrondata$calibcurvefile, " \n")
 cat("Input file at", Bchrondata$inputfile, " \n")

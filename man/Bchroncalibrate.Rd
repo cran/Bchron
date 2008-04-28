@@ -5,7 +5,7 @@
   Runs standard radiocarbon calibration of determinations with no restrictions on their ordering.
 }
 \usage{
-Bchroncalibrate(Bchrondata, iterations = 5e+05, burnin = 50000, thinby = 5, howmany = 50000)
+Bchroncalibrate(Bchrondata, iterations = 5e+05, burnin = 50000, thinby = 45, howmany = 50000)
 }
 \arguments{
   \item{Bchrondata}{ A Bchron data object with fields for the the input and output

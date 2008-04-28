@@ -29,7 +29,7 @@ cat("WARNING: running the model here will over-write previous model runs. \n")
 cat("WARNING: longer runs may take up to 12 hours to complete. \n")
 cat("====================================================================\n")
 cat("Select 0 to exit this menu. \n")
-choices2 <- c("test run","short ", "long", "super-long")
+choices2 <- c("test run","short", "long", "super-long")
 choose2 <- menu(choices2, title = "What type of Bchron model run would you like?")
 iterations <- 100
 burnin <- 20

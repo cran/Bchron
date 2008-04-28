@@ -167,7 +167,7 @@ for (iter=0;iter<m;iter++)
         } else {
 
      	//sample a new value from a distribution using function from random.c:
-		thetanew[q] = rnorm(thetaall[q],runif(0.05,1));
+		thetanew[q] = rnorm(thetaall[q],runif(0.0,1.0));
         
         // Stop it from choosing bad values outside the range of BigCal
         if(type[q]==1) while((thetanew[q]< LowCal) | (thetanew[q] > HighCal)) thetanew[q] = rnorm(thetaall[q],0.1);

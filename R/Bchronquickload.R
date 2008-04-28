@@ -2,6 +2,7 @@ Bchronquickload <- function(name,fullname=NULL,path="c:/Bchron",calibname="IntCa
 
 Bchrondata <- list()
 Bchrondata$version <- Bchronversion
+Bchrondata$fullname <- fullname
 Bchrondata$path <- path
 Bchrondata$calibcurvefile <- paste(Bchrondata$path,"/CalCurve/",calibname,".bch",sep = "")
 Bchrondata$name <- name

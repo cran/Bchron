@@ -6,7 +6,7 @@ Bchrondata$SHOULDRUN <- FALSE
 Bchrondata$EXIT <- FALSE
 Bchrondata$CALIBRATED <- FALSE
 Bchrondata$RUN <- FALSE
-Bchrondata$version <- "2.0"
+Bchrondata$version <- "2.1"
 
 # Need this library
 library(coda)
@@ -32,6 +32,7 @@ choices <- c("Load in or set up a Bchron data file",
       "Change calibration curve used",
       "Check data files for possible errors",
       "First time users and help system",
+      "Convert an EPD file for use in Bchron",
       "Exit")
 title <- "The available options are:"
 choose <- menu(choices, title = title)
@@ -49,7 +50,23 @@ if (choose == 1) {
   }
 }
 # Calibrate the 14C dates
-if (choose == 2) Bchrondata <- Bchroncalibrate(Bchrondata)
+if (choose == 2) {
+  Bchrondata <- Bchroncalibrate(Bchrondata)
+  if(Bchrondata$SHOULDRUN==TRUE) {
+    cat("Do you wish to check convergence? (y/n) \n")
+    checkconverge <- scan(what = "", nlines = 1, quiet = TRUE)
+    while(length(checkconverge)==0) checkconverge <- scan(what = "", nlines = 1, quiet = TRUE)
+    if(checkconverge=="y" || checkconverge=="yes") {
+      Bchronconvergecheck(Bchrondata,CALDATES=TRUE)
+    }
+    cat("Do you wish to plot the calibrated dates? (y/n) \n")
+    plotdates <- scan(what = "", nlines = 1, quiet = TRUE)
+    while(length(plotdates)==0) plotdates <- scan(what = "", nlines = 1, quiet = TRUE)
+    if(plotdates=="y" || plotdates=="yes") {
+      Bchrondata <- Bchronplotterdatesonly(Bchrondata)
+    }
+  }
+}
 
 # Run the Bchron model
 if (choose == 3) {
@@ -153,6 +170,12 @@ if(choose == 8) {
 
 # Exit
 if (choose == 9) {
+  BchronreadEPD()
+}
+
+
+# Exit
+if (choose == 10) {
   cat("Thank you. Exiting... \n")
   Bchrondata$EXIT = TRUE
 }

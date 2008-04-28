@@ -40,6 +40,10 @@ if(nrow(pars)<2000) cat("\nWARNING: This is a very short run - convergence resul
 
 good <- try(geweke.diag(pars)[[1]],silent=TRUE)
 if (is.numeric(good)) {
+    cat("========================================================================================\n")
+    cat("If many of these values are small (less than 0.01), a longer run will be required.      \n")
+    cat("If any of these values are NA, there may have been a problem. The core should be re-run.\n")
+    cat("========================================================================================\n\n")
     cat("Worst parameters are ... \n")
     temp <- geweke.diag(pars)[[1]]
     pvals <- c(pnorm(temp[temp<0]),1-pnorm(temp[temp>0]))
