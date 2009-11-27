@@ -14,7 +14,8 @@ Bchronmenu()
  The Bchron menu system first creates a Bchrondata object with fields for the the input and output
  files, the name of the core being used, the details of the calibration curve, and details of the 
  model run required. Using the menu system bypasses the need to create these objects. This function is essentially a shell for calling \code{\link{Bchronload}}, \code{\link{Bchroncalibrate}}, 
- \code{\link{BchronMCMC}}, \code{\link{Bchronpredict}} and \code{\link{Bchronplot}}.
+ \code{\link{BchronMCMC}}, \code{\link{Bchronpredict}} and \code{\link{Bchronplot}}. Other useful functions include: \code{\link{Bchroncheck}}, \code{\link{Bchronconvergecheck}}, 
+ \code{\link{Bchroncreatecalcurve}}, \code{\link{Bchronplotevent}}, \code{\link{Bchronpredictevent}} and \code{\link{Bchronproxyplot}}
  }
 \references{
 Haslett and Parnell (2008, JRSSC, 57:399-418) and Parnell et al (2008, QSR, 27(19-20):1872-1885)

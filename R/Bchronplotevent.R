@@ -50,6 +50,7 @@ if(!is.null(slice)) {
     hist(Bchrondata$chrons[,slice],main=paste(Bchrondata$fullname,": ",depth," cm",sep=""),freq=FALSE,col=histcolour,xlab="k cal yrs BP",las=1,breaks=nbreaks)
     grid()
     mtext(paste("Bchron",ifelse(Bchrondata$version>0,paste(" v",Bchrondata$version),""),sep=""),side=1,line=4,adj=1,cex=0.6)
+    mtext(paste(Bchrondata$calname),side=1,line=4,adj=0,cex=0.6)
 }
 
 if(!is.null(event)) {
@@ -64,6 +65,7 @@ if(!is.null(event)) {
     hist(eventage,main=paste(Bchrondata$fullname,": ",eventname,sep=""),freq=FALSE,col=histcolour,xlab="k cal yrs BP",las=1,breaks=nbreaks)
     grid()
     mtext(paste("Bchron",ifelse(Bchrondata$version>0,paste(" v",Bchrondata$version),""),sep=""),side=1,line=4,adj=1,cex=0.6)
+    mtext(paste(Bchrondata$calname),side=1,line=4,adj=0,cex=0.6)
 }
 
 

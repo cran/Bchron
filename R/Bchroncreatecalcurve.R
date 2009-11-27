@@ -32,7 +32,7 @@ while(BADPATH==TRUE) {
 
 cat("Files with .bch as the file extension have already been converted for Bchron use. \n")
 cat(".14c files can be downloaded directly from eg \n")
-cat("http://www.radiocarbon.org/IntCal04.htm \n")
+cat("http://www.radiocarbon.org \n")
 cat("but will need to be converted. This will take a few moments.\n")
 choices <- c(list.files(paste(path,"/CalCurve",sep="")))
 title <- "List of available calibration curves:"

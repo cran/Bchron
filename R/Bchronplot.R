@@ -81,6 +81,7 @@ if(plot==TRUE) {
     }
     axis(2,at=pretty(Bchrondata$outdepths/100),las=1)
     mtext(paste("Bchron",ifelse(Bchrondata$version>0,paste(" v",Bchrondata$version),""),sep=""),side=1,line=4,adj=1,cex=0.6)
+    mtext(paste(Bchrondata$calname),side=1,line=4,adj=0,cex=0.6)
 
     # Draw a grid and add lines at each depth
     grid()

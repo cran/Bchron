@@ -1,4 +1,4 @@
-Bchronload <- function(name,fullname=NULL,path=NULL,outdepths=NULL,calibname="IntCal04",extractdate=-0.05,check=FALSE,full=FALSE) {
+Bchronload <- function(name,fullname=NULL,path=NULL,outdepths=NULL,calibname="IntCal09",extractdate=-0.05,check=FALSE,full=FALSE) {
 
 cat("Loading data...\n")
 
@@ -19,6 +19,7 @@ Bchrondata$version <- read.dcf(file=system.file("DESCRIPTION", package="Bchron")
 
 # Find the various files
 Bchrondata$path <- path
+Bchrondata$calname <- calibname
 Bchrondata$calibcurvefile <- paste(Bchrondata$path,"/CalCurve/",calibname,".bch",sep = "")
 Bchrondata$c14file <- paste(Bchrondata$path,"/CalCurve/",calibname,".14c",sep = "")
 Bchrondata$inputfile <- paste(Bchrondata$path, "/Input/",Bchrondata$name,".dat",sep="")
@@ -38,6 +39,7 @@ Bchrondata$lowcal <- min(BigC14Temp[,1])/1000
 Bchrondata$highcal <- max(BigC14Temp[,1])/1000
 
 Bchrondata$input <- read.table(Bchrondata$inputfile,header=TRUE)
+Bchrondata$input[,1] <- as.character(Bchrondata$input[,1])
 if(is.null(outdepths)) {
     cat("Using default range of top depth to bottom depth for output depths. \n")
     outdepths <- seq(min(Bchrondata$input[,4]),max(Bchrondata$input[,4]),length=200)

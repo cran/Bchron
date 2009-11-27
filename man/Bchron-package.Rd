@@ -37,7 +37,7 @@ Example full model run (with Glendalough.dat):
 
 2. Type Bchronmenu() and choose option 1.
 
-3. Locate your Bchron directory, and select IntCal04.bch as your calibration curve and Glendalough.dat as your input file. All other options
+3. Locate your Bchron directory, and select IntCal09.bch as your calibration curve and Glendalough.dat as your input file. All other options
 can be left as default.
 
 4. Now choose option 2 to calibrate the radiocarbon dates.

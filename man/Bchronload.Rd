@@ -7,7 +7,7 @@ Command-line based loading of Bchron input files for a Bchron run.
 A quick command line function to create a Bchron data object from various inputs. Note that all text strings must be given in inverted commas (apart from TRUE/FALSE).
 }
 \usage{
-Bchronload(name, fullname = NULL, path = NULL, outdepths=NULL,calibname = "IntCal04", extractdate = -0.05, check = FALSE, full = FALSE)
+Bchronload(name, fullname = NULL, path = NULL, outdepths=NULL,calibname = "IntCal09", extractdate = -0.05, check = FALSE, full = FALSE)
 }
 \arguments{
   \item{name}{

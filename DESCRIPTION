@@ -1,7 +1,7 @@
 Package: Bchron
 Type: Package
 Title: Bayesian chronologies via compound Poisson-Gamma processes.
-Version: 3.0
+Version: 3.1
 Date: 2009-11-27
 Depends: hdrcde, coda, svDialogs
 Author: Andrew Parnell
@@ -14,9 +14,9 @@ Description: This package takes dating information to produce joint
         all output to files to allow for further analysis (eg
         palaeoclimate reconstruction). There is a menu system for
         users, as well as a command line interface for advanced and/or
-        batch processing.
+        batch processing. Latest version contains IntCal09 data.
 License: GPL (>= 2)
 LazyLoad: yes
-Packaged: 2009-12-08 12:21:16 UTC; Andrew
+Packaged: 2010-01-14 16:37:40 UTC; Andrew
 Repository: CRAN
-Date/Publication: 2009-12-09 08:52:29
+Date/Publication: 2010-01-14 17:33:11
