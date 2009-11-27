@@ -5,10 +5,19 @@
     Opens a new graphics window on a variety of platforms
 }
 \usage{
-newgraphwindow()
+newgraphwindow(width,height)
+}
+\arguments{
+  \item{width}{
+Width of graph in cm
+}
+  \item{height}{
+Height of graph in cm
+}
 }
 \details{
-  Not intended for use outside \code{\link{Bchronmenu}}
+  A neat way of opening a new window of desired width/height on a variety of platforms.
 }
-\author{ Andrew Parnell }
+\author{ Andrew Parnell <andrew.parnell@ucd.ie> }
 \keyword{ programming}
+

@@ -14,91 +14,47 @@
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-void predict(char**PARFILE,char**DETSFILE,char**OUTFILE,int*ndets,char**DDEPTHFILE,int*lenddepths,int*numchrons,double*Present,char**OUTLIERFILE)
+void predict(char**thelabcode,double*thecage,double*thesd,double*thedepths,double*thethick,double*theoutprob1,double*theoutprob2,int*thetypes,char**PARFILE,char**OUTFILE,int*ndets,double*outdepths,int*lenddepths,int*numchrons,double*Present,char**OUTLIERFILE)
 {
 
 ///////////////////////////// READ IN DETERMINATIONS /////////////////////////////
 
 //enter determinations and their errors - create them as dynamic arrays and enter them
-//from a separate file using same method as cal curve:
-char labcode[*ndets][50];
 double cage[*ndets],sd[*ndets],depth[*ndets],thick[*ndets],outprob1[*ndets],outprob2[*ndets];
-int type[*ndets]; 
+char labcode[*ndets][50];
+int type[*ndets],i,j; 
 int howmany = 1000;
 
-FILE *dets;
-
-double numb1[*ndets],numb2[*ndets],numb3[*ndets],numb4[*ndets],numb5[*ndets],numb6[*ndets];
-int numb7[*ndets];
-int i;
-
-dets = fopen(*DETSFILE,"r");
-
-if(dets==NULL) {
-    error("Error: can't open determinations file.\n");
-} else {
-    Rprintf("Determinations file opened successfully.\n");
-
-    // First get rid of header
-    char temp[100];
-    fgets(temp,100,dets);
-
-    // Now read in as ints and then loop again to convert to double
+Rprintf("========================= \n");
+	Rprintf("Data (as read in to 3dp): \n");
     for(i=0;i<*ndets;i++)
     {
-       fscanf(dets,"%s",labcode[i]);   
-       fscanf(dets,"%lf",&numb1[i]);                       
-       fscanf(dets,"%lf",&numb2[i]);                       
-       fscanf(dets,"%lf",&numb3[i]);                       
-       fscanf(dets,"%lf",&numb4[i]);                       
-       fscanf(dets,"%lf",&numb5[i]);
-       fscanf(dets,"%lf",&numb6[i]);
-       fscanf(dets,"%i",&numb7[i]);
+	   for(j=0;j<50;j++) labcode[i][j] = thelabcode[i][j];	
+       cage[i] = thecage[i];                       
+       sd[i] = thesd[i];
+       depth[i] = thedepths[i];
+       thick[i] = thethick[i];
+       outprob1[i] = theoutprob1[i];
+       outprob2[i] = theoutprob2[i];
+       type[i] = thetypes[i];
+	   Rprintf("%s %3.3lf %3.3lf %3.3lf %3.3lf %3.3lf %3.3lf %i \n",labcode[i],cage[i],sd[i],depth[i],thick[i],outprob1[i],outprob2[i],type[i]);
     }
-
-    for(i=0;i<*ndets;i++)
-    {
-       cage[i] = (double)numb1[i]/1000;                       
-       sd[i] = (double)numb2[i]/1000;
-       depth[i] = (double)numb3[i]/100;
-       thick[i] = (double)numb4[i]/100;
-       outprob1[i] = (double)numb5[i];
-       outprob2[i] = (double)numb6[i];
-       type[i] = (int)numb7[i];
-    }
-    
-    Rprintf("Determinations read successfully.\n");
-    
-    fclose(dets);
-}
+    Rprintf("End of data. \n");
+    Rprintf("========================= \n");
 
 //////////////////////// READ IN DDEPTHS //////////////////////////
 
-// Read in the 14C depths and the design depths
+// Read in the output depths
 double ddepths[*lenddepths];
+int nddepths;
 
-FILE *ddfile;
+nddepths=*lenddepths;
 
-// Open design depths file first
-
-ddfile = fopen(*DDEPTHFILE,"r");
-
-if(ddfile==NULL) {
-    error("Error: can't open design depths file.\n");
-} else {
-    Rprintf("Design depths file opened successfully.\n");
-
-    // Now read in 
-    for(i=0;i<*lenddepths;i++)
-    {
-       fscanf(ddfile,"%lf",&ddepths[i]);  
-       ddepths[i] = ddepths[i]/100;  
-    }
-
-    Rprintf("Design depths read successfully.\n");
-
-    fclose(ddfile);
+for(i=0;i<nddepths;i++)
+{
+    ddepths[i] = outdepths[i];  
 }
+Rprintf("Output depths read successfully.\n");
 
 ///////////////////// STARTING VALUES ////////////////////////////
 
@@ -114,7 +70,7 @@ int flag1[*ndets],flag2[*ndets];
 double PredEst[*lenddepths],alphaT,lambdaT,betaT;
 int OutlierSum1[*ndets],OutlierSum2[*ndets];
 int Nd;
-int j,k,m,K=1000,wrong=0,count=0;
+int k,m,K=1000,wrong=0,count=0;
 
 // Set PredEsts to zero
 for(k=0;k<*lenddepths;k++) PredEst[k] = 0.0;
@@ -174,9 +130,8 @@ if(pars==NULL) {
     alphaT = (2-p)/(p-1);
     lambdaT = pow(mean,(2-p))/(psi*(2-p));
     betaT = 1/(psi*(p-1)*pow(mean,(p-1)));
-    diff(mydepths,ndets,depthdiff);
+    diff(mydepths,ndets,depthdiff); 
 
-    
     for(k=0;k<*ndets;k++)
     {
         OutlierSum1[k] +=flag1[k];
@@ -364,7 +319,7 @@ if(pars==NULL) {
         }
     }   
     }
-    
+
     // Now interpolate below
     // Find the depths that are above the first depth
     lencurrentdepths = GetLengthCurrentDepths(mydepths[*ndets-1],ddepths[*lenddepths-1],ddepths,*lenddepths);
@@ -427,13 +382,13 @@ if(pars==NULL) {
 		fprintf(chrons,"%lf ", PredEst[k]);
     }
     fprintf(chrons,"\n");
-    
+   
 
+// End of chronologies loop
 }
 
     fclose(pars);
     fclose(chrons);
-
     
     // Write out the outliers to a file
     FILE *outliers;
@@ -446,6 +401,8 @@ if(pars==NULL) {
     }
     fclose(outliers);
 
+// End of good pars loop
 }
 
+// End of function
 }

@@ -17,7 +17,7 @@ void R_CheckUserInterrupt(void);
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-void cpg(char**CALPATH,char**INFILE,char**OUTFILE,int*ndets,int*BigCsize,double*LCal,double*HCal,int*m,int*burnin,int*howmany,int*thinby,int*fails)
+void cpg(double*thecage,double*thesd,double*thedepths,double*thethick,double*theoutprob1,double*theoutprob2,int*thetypes,char**CALPATH,char**OUTFILE,int*ndets,int*BigCsize,double*LCal,double*HCal,int*m,int*burnin,int*howmany,int*thinby,int*fails)
 {
 
 /////////////////////////////////// CONSTANTS ////////////////////////////////////
@@ -59,57 +59,24 @@ if(CalFile==NULL) {
 ///////////////////////////// READ IN DETERMINATIONS /////////////////////////////
 
 //enter determinations and their errors - create them as dynamic arrays and enter them
-//from a separate file using same method as cal curve:
-char labcode[*ndets][50];
 double cage[*ndets],sd[*ndets],depth[*ndets],thick[*ndets],outprob1[*ndets],outprob2[*ndets];
 int type[*ndets]; 
 
-FILE *dets;
-
-double numb1[*ndets],numb2[*ndets],numb3[*ndets],numb4[*ndets],numb5[*ndets],numb6[*ndets];
-int numb7[*ndets];
-
-dets = fopen(*INFILE,"r");
-
-if(dets==NULL) {
-    error("Error: can't open determinations file.\n");
-    *fails=1;
-    return;
-} else {
-    Rprintf("Determinations file opened successfully.\n");
-
-    // First get rid of header
-    char temp[100];
-    fgets(temp,100,dets);
-
-    // Now read in as ints and then loop again to convert to double
+Rprintf("========================= \n");
+	Rprintf("Data (as read in to 3dp): \n");
     for(i=0;i<*ndets;i++)
     {
-       fscanf(dets,"%s",labcode[i]);   
-       fscanf(dets,"%lf",&numb1[i]);                       
-       fscanf(dets,"%lf",&numb2[i]);                       
-       fscanf(dets,"%lf",&numb3[i]);                       
-       fscanf(dets,"%lf",&numb4[i]);                       
-       fscanf(dets,"%lf",&numb5[i]);
-       fscanf(dets,"%lf",&numb6[i]);
-       fscanf(dets,"%i",&numb7[i]);
+       cage[i] = thecage[i];                       
+       sd[i] = thesd[i];
+       depth[i] = thedepths[i];
+       thick[i] = thethick[i];
+       outprob1[i] = theoutprob1[i];
+       outprob2[i] = theoutprob2[i];
+       type[i] = thetypes[i];
+	   Rprintf("%3.3lf %3.3lf %3.3lf %3.3lf %3.3lf %3.3lf %i \n",cage[i],sd[i],depth[i],thick[i],outprob1[i],outprob2[i],type[i]);
     }
-
-    for(i=0;i<*ndets;i++)
-    {
-       cage[i] = (double)numb1[i]/1000;                       
-       sd[i] = (double)numb2[i]/1000;
-       depth[i] = (double)numb3[i]/100;
-       thick[i] = (double)numb4[i]/100;
-       outprob1[i] = (double)numb5[i];
-       outprob2[i] = (double)numb6[i];
-       type[i] = (int)numb7[i];
-    }
-    
-    Rprintf("Determinations read successfully.\n");
-    
-    fclose(dets);
-}
+    Rprintf("End of data. \n");
+    Rprintf("========================= \n");
 
 ///////////////////// STARTING VALUES ////////////////////////////
 
@@ -124,6 +91,7 @@ int k,badcount;
 double p=1.2,mean=5.0,meannew,psi=2.0,psinew; // Starting values
 double hi = 10000000; // big number to represent infinity
 
+GetRNGstate();
 for(i=0;i<*ndets;i++) 
 {
     // Estimate starting values for theta, could do better here with linearinterp
@@ -206,7 +174,6 @@ for (iter=0;iter<*m;iter++)
     for(k=0; k<*ndets; k++)	
         if(iter % *thinby == 0 && iter > *burnin) fprintf(parameterfile,"%lf ", shift2[k]);
     if(iter % *thinby == 0 && iter > *burnin) fprintf(parameterfile,"%lf %lf \n", mean,psi);
-    
 
     ///////////////////////////////// DEPTHS ////////////////////////////////////////
   
@@ -275,12 +242,12 @@ for (iter=0;iter<*m;iter++)
             badtheta = Min(thetadiff,*ndets-1); 
             badcount ++;
             if(badcount==200) {
-                Rprintf("Cannot find any satisfactory chronologies. \nCheck the input file %s \nfor non-consistent depths and ages \n",*INFILE);
+                Rprintf("Cannot find any satisfactory chronologies. \nCheck the input file for non-consistent depths and ages \n");
                 *fails=1;
                 return;
             }
-        }    	     
-      
+        }    
+		
 	    //calculate old likelihood on first iteration:
         if(iter==0) 
         {
@@ -346,7 +313,7 @@ for (iter=0;iter<*m;iter++)
             diff(thetaall,ndets,thetadiff);
         }
 
-    }		
+    }	
 
     // For all dates (radiocarbon or not) the outlier parameters are updated
     for(q1=0; q1<*ndets; q1++)

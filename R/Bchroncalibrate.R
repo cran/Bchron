@@ -1,62 +1,33 @@
-Bchroncalibrate <- function(Bchrondata,iterations=500000,burnin=50000,thinby=45,howmany=50000) {
+Bchroncalibrate <- function(Bchrondata,iterations=500000,burnin=50000,thinby=45,howmany=50000,defaults=FALSE) {
 
 cat("Calibrating radiocarbon dates... \n")
-if (Bchrondata$SHOULDRUN == FALSE) {
-    cat("You have not entered any data. \n")
-    cat("Please start again by running option 1, or calling Bchronloaddata(). \n \n")
-    cat("Press <Enter> to continue...")
-    readline()
-    invisible()
-    return(Bchrondata)
-}
-
-# Get the number of determinations
-Temp <- read.table(Bchrondata$inputfile,header = TRUE)
-Bchrondata$ndet <- nrow(Temp)
 
 # Create output file path
-Bchrondata$calibdatesfile <- paste(Bchrondata$path, "/Output/",Bchrondata$name,"TrueDates.txt",sep = "")
 if(file.exists(Bchrondata$calibdatesfile)) {
-  cat("Calibration stage appears to have been already run for this core. \n")
-  cat("Do you wish to re-run? (y/n) \n")
-  rerun <- scan(what = "", nlines = 1, quiet = TRUE)
-  while(length(rerun)==0) rerun <- scan(what = "", nlines = 1, quiet = TRUE)
-  if(rerun=="n" || rerun=="no") return(Bchrondata)
+    if(defaults!=TRUE) {
+      cat("Calibration stage appears to have been already run for this core. \n")
+      cat("Do you wish to re-run? (y/n) \n")
+      rerun <- scan(what = "", nlines = 1, quiet = TRUE)
+      while(length(rerun)==0) rerun <- scan(what = "", nlines = 1, quiet = TRUE)
+      if(rerun=="n" || rerun=="no") return()
+    }
 }
-
-cat("============================================================================\n")
-cat("WARNING: running calibration here will over-write previous calibration runs. \n")
-cat("============================================================================\n")
-cat("Select 0 to exit this menu. \n")
-choices2 <- c("standard", "long", "super-long")
-choose2 <- menu(choices2, title = "What type of Bchron model run would you like?")
-iterations <- 500000
-burnin <- 50000
-howmany <- 50000
-thinby <- 45
-if(choose2 == 2) {
-    iterations <- 1e+06
-    burnin <- 200000
-    howmany <- 50000
-    thinby <- 80
-}
-if (choose2 == 3) {
-    iterations <- 2e+06
-    burnin <- 400000
-    howmany <- 50000
-    thinby <- 160
-}
-if(choose2 == 0) return(Bchrondata)
 
 cat("Calibration curve at", Bchrondata$calibcurvefile, " \n")
 cat("Input file at", Bchrondata$inputfile, " \n")
 cat("Output file at", Bchrondata$calibdatesfile, " \n")
-cat("Number of determinations is", Bchrondata$ndet, " \n")
+cat("Number of determinations is", nrow(Bchrondata$input), " \n")
 cat("\n")
-out <- .C("calibrate", as.character(Bchrondata$calibcurvefile),
-        as.character(Bchrondata$inputfile),
+
+# Give calibrate code file c14dates and c14errors only
+
+out <- .C("calibrate", 
+        as.double(Bchrondata$input[,2]/1000),
+        as.double(Bchrondata$input[,3]/1000),
+        as.integer(Bchrondata$input[,8]),
+        as.character(Bchrondata$calibcurvefile),
         as.character(Bchrondata$calibdatesfile),
-        as.integer(Bchrondata$ndet),
+        as.integer(nrow(Bchrondata$input)),
         as.integer(Bchrondata$bigcalsize),
         as.double(Bchrondata$lowcal),
         as.double(Bchrondata$highcal),
@@ -70,11 +41,14 @@ cat("\n")
 cat("Calibration completed successfully. \n")
 cat(paste("Results stored in:",Bchrondata$calibdatesfile),sep="")
 cat("\n \n")
-cat("Press <Enter> to continue...")
-readline()
-invisible()
 
-Bchrondata$CALIBRATED <- TRUE
-return(Bchrondata)
+# Create a calibrated dates ranges file
+Bchrondata$calibdates <- read.table(Bchrondata$calibdatesfile)
+calibranges <- matrix(0,ncol=3,nrow=ncol(Bchrondata$calibdates))
+cat(paste("Date","2.5%","50%","97.5%","\n"),file=Bchrondata$calibrangesfile,append=FALSE)
+for(i in 1:ncol(Bchrondata$calibdates)) {
+    calibranges[i,] <- quantile(Bchrondata$calibdates[,i],probs=c(0.025,0.5,0.975))
+    cat(c(paste(Bchrondata$input[i,1]),round(calibranges[i,],3),"\n"),file=Bchrondata$calibrangesfile,append=TRUE)
+}
 
 }

@@ -1,35 +1,70 @@
-Bchronplotevent <- function(Bchrondata) {
+Bchronplotevent <- function(Bchrondata,depth=NULL,slice=NULL,event=NULL,eventname=NULL,nbreaks=30,histcolour="light blue",...)
+{
 
-cat(paste("Now plotting date estimates for each of the depths in ",
-    Bchrondata$name, "eventages.txt \n", sep = ""))
-
-if(length(Bchrondata$eventnames)>1) {
-  choices <- c(Bchrondata$eventnames,"All")
-  title <- "Which event would you like to plot?"
-  choose <- menu(choices, title = title)
-} else {
-  choose <- 1
+if(is.null(depth) & is.null(slice) & is.null(event)) {
+    choices <- c("slice","depth", "event")
+    choose <- menu(choices,title="Please choose which of 'slice', 'depth' or 'event' you wish to enter")
+    
+    if(choose==1) {
+        cat("Please enter slice number. Choose an integer from 1 to",length(Bchrondata$outdepths),"\n")
+        slice <- scan(what = "", nlines = 1, quiet = TRUE)
+        while(length(slice)==0 | !is.integer(slice) | slice<1 | slice>length(Bchrondata$outdepths)) {
+            cat("Invalid value, try again \n")
+            slice <- scan(what = "", nlines = 1, quiet = TRUE)
+        }
+    }
+    if(choose==2) {
+        cat("Please enter depth in cm. Choose a number from the set of output depth values given when loading the data in \n")
+        depth <- scan(what = "", nlines = 1, quiet = TRUE)
+        while(length(depth)==0 | is.na(match(depth,Bchrondata$outdepths))) {
+            cat("Invalid value, try again \n")
+            depth <- scan(what = "", nlines = 1, quiet = TRUE)
+        }
+    }
+    if(choose==3) {
+        cat("Please enter event name. \n")
+        event <- scan(what = "", nlines = 1, quiet = TRUE)
+        while(length(event)==0) event <- scan(what = "", nlines = 1, quiet = TRUE)
+        event <- as.character(event)
+    }
 }
 
-if(choose == length(Bchrondata$eventnames)+1) {
-  Bchrondata$hdreventoutput <- rep("",length(Bchrondata$eventnames))
-  for(i in 1:length(Bchrondata$eventnames)) {
-    Bchrondata$hdreventoutput[i] <- paste(Bchrondata$path,"/Output/",Bchrondata$name,
-        "EventAges",Bchrondata$eventnames[i],"HDRs.txt", sep = "")
-      Bchronplotdens(Bchrondata$eventagefile[i],Bchrondata$fullname,Bchrondata$hdreventoutput[i],Bchrondata$eventfullnames[i],Bchrondata$version)
-  }
-} else {
-  Bchrondata$hdreventoutput[choose] <- paste(Bchrondata$path,"/Output/",Bchrondata$name,
-      "EventAges",Bchrondata$eventnames[choose],"HDRs.txt", sep = "")
-  Bchronplotdens(Bchrondata$eventagefile[choose],Bchrondata$fullname,Bchrondata$hdreventoutput[choose],Bchrondata$eventfullnames[choose],Bchrondata$version)
+if(!is.null(depth) & !is.null(slice) & !is.null(event)) stop("Only one of depth, slice, event can be given")
+
+if(is.null(slice) & is.null(event)) {
+    slice <- match(depth,Bchrondata$outdepths)
+    if(is.na(slice)) stop(paste("Depth given not found output depths."))
+}
+if(is.null(depth) & is.null(event)) {
+    depth <- Bchrondata$outdepths[slice]
 }
 
-cat("\n")
-cat("Done! \n")
-cat("Press <Enter> to continue...")
-readline()
-invisible()
+# If given a depth/slice
+if(!is.null(slice)) {
 
-return(Bchrondata)
+    # Get the chronologies
+    Bchrondata$chrons <- as.matrix(read.table(Bchrondata$chronsfile))
+
+    # create some plots
+    newgraphwindow(...)
+    hist(Bchrondata$chrons[,slice],main=paste(Bchrondata$fullname,": ",depth," cm",sep=""),freq=FALSE,col=histcolour,xlab="k cal yrs BP",las=1,breaks=nbreaks)
+    grid()
+    mtext(paste("Bchron",ifelse(Bchrondata$version>0,paste(" v",Bchrondata$version),""),sep=""),side=1,line=4,adj=1,cex=0.6)
+}
+
+if(!is.null(event)) {
+    if(is.null(eventname)) eventname <- event
+    
+    eventagefile <- paste(Bchrondata$path,"/Output/",Bchrondata$name,"EventAges",event,".txt",sep="")
+    if(!file.exists(eventagefile)) stop(paste("Event age file not found:",eventagefile))
+    eventage <- as.matrix(read.table(eventagefile))
+
+    # create some plots
+    newgraphwindow(...)
+    hist(eventage,main=paste(Bchrondata$fullname,": ",eventname,sep=""),freq=FALSE,col=histcolour,xlab="k cal yrs BP",las=1,breaks=nbreaks)
+    grid()
+    mtext(paste("Bchron",ifelse(Bchrondata$version>0,paste(" v",Bchrondata$version),""),sep=""),side=1,line=4,adj=1,cex=0.6)
+}
+
 
 }

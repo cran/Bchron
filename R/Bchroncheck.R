@@ -2,13 +2,12 @@ Bchroncheck <- function(Bchrondata) {
 
 cat("Checking files for possible errors... \n\n")
 
-if(Bchrondata$SHOULDRUN == FALSE) {
+if(!file.exists(Bchrondata$inputfile)) {
     cat("No data found. \n")
-    cat("Please start again by running option 1, or calling Bchronloaddata(). \n \n")
+    cat("Please start again by running option 1, or calling Bchronload(). \n \n")
     cat("Press <Enter> to continue...")
     readline()
     invisible()
-    return(Bchrondata)
 }
 
 # Checks:
@@ -17,7 +16,7 @@ if(Bchrondata$SHOULDRUN == FALSE) {
 # 3) Check input files make sense
 # 4) Check ddepth file makes sense
 
-# 1) Check files exist - calibcurvefile, inputfile, ddepthfile
+# 1) Check files exist - calibcurvefile, inputfile, ddepthsfile
 cat("1. Checking files exist...\n")
 cat("a. Calibration curve......")
 if(file.exists(Bchrondata$calibcurvefile)) {
@@ -35,18 +34,6 @@ if(file.exists(Bchrondata$inputfile)) {
   cat("Press <Enter> to continue...")
   readline()
   invisible()
-  return(Bchrondata)
-}
-cat("c. Design depths file......")
-if(file.exists(Bchrondata$ddepthfile)) {
-  cat("done\n")
-} else {
-  cat("error\n")
-  cat(paste("Design depths file not found:",Bchrondata$ddepthfile,"\n"))
-  cat("Press <Enter> to continue...")
-  readline()
-  invisible()
-  return(Bchrondata)
 }
 
 cat("\n")
@@ -62,7 +49,6 @@ if(ncol(InputTemp)==8) {
   cat("Press <Enter> to continue...")
   readline()
   invisible()
-  return(Bchrondata)
 }
 cat("b. Checking for impossible depths.....")
 tempdepths <- InputTemp[,4]
@@ -73,7 +59,6 @@ if(any(tempthick[duplicated(tempdepths)]==0)) {
   cat("Press <Enter> to continue...")
   readline()
   invisible()
-  return(Bchrondata)
 } else {
   cat("done\n")
 }
@@ -85,7 +70,6 @@ if(any(tempout>1) || any(tempout<0)) {
   cat("Press <Enter> to continue...")
   readline()
   invisible()
-  return(Bchrondata)
 } else {
   cat("done\n")
 }
@@ -97,7 +81,6 @@ if(!is.numeric(tempnums)) {
   cat("Press <Enter> to continue...")
   readline()
   invisible()
-  return(Bchrondata)
 } else {
   cat("done\n")
 }
@@ -120,7 +103,6 @@ if((lowdates-5)<0 || (highdates-5)>length(CalCurveTemp[,1]) ) {
   cat("Press <Enter> to continue...")
   readline()
   invisible()
-  return(Bchrondata)
 }
 
 lowcalagelookup <- CalCurveTemp[lowdates-5,1]
@@ -132,48 +114,31 @@ if(any(is.na(lowcalagelookup)) || any(is.na(highcalagelookup)) ) {
   cat("Press <Enter> to continue...")
   readline()
   invisible()
-  return(Bchrondata)
 } else {
   cat("done\n")
 }
 
-cat("\n")
-# 4) Check ddepthfile
-cat("4. Checking design depths file...\n")
-ddepthtemp <- read.table(Bchrondata$ddepthfile,header=FALSE)
-cat("a. Checking for non-numeracy.....")
-if(!is.numeric(ddepthtemp[,1])) {
-  cat("error\n")
-  cat(paste("Check design depth file for non-numeric values:",Bchrondata$ddepthfile,"\n"))
-  cat("Press <Enter> to continue...")
-  readline()
-  invisible()
-  return(Bchrondata)
-} else {
-  cat("done\n")
+# Check output files for mis-matches (if they exist)
+if(file.exists(Bchrondata$chronsfile)) {
+    cat("\n")
+    cat("4. Checking output files.....")
+    chrons <- read.table(Bchrondata$chronsfile)
+    if(ncol(chrons)!=length(Bchrondata$outdepths)) {
+      cat("warning\n")
+      cat("Number of output depths does not match size of chronology. \n")
+      cat("Re-run prediction stage. \n")
+      cat("Press <Enter> to continue...")
+      readline()
+      invisible()
+    } else {
+      cat("done\n")
 }
-cat("b. Checking for order.....")
-if(!all(ddepthtemp[,1]==sort(ddepthtemp[,1]))) {
-  cat("error\n")
-  cat(paste("Check design depth file for non-ascending values:",Bchrondata$ddepthfile,"\n"))
-  cat("Press <Enter> to continue...")
-  readline()
-  invisible()
-  return(Bchrondata)
-} else {
-  cat("done\n")
+    
+    
+    
+
 }
-cat("c. Checking for duplicates.....")
-if(any(duplicated(ddepthtemp[,1])==TRUE)) {
-  cat("error\n")
-  cat(paste("Check design depth file for duplicated values:",Bchrondata$ddepthfile,"\n"))
-  cat("Press <Enter> to continue...")
-  readline()
-  invisible()
-  return(Bchrondata)
-} else {
-  cat("done\n")
-}
+
 
 cat("\n")
 cat("=====================\n")
@@ -182,6 +147,5 @@ cat("=====================\n")
 cat("Press <Enter> to continue...")
 readline()
 invisible()
-return(Bchrondata)
 
 }

@@ -4,7 +4,7 @@
 #include<stdio.h>
 #include<time.h>
 
-void calibrate(char**CALPATH,char**INFILE,char**OUTFILE,int*ndets,int*BigCSize,double*LCal,double*HCal,int*iterat,int*burn,int*thin,int*howmny)
+void calibrate(double*c14dates,double*c14errors,int*datetypes,char**CALPATH,char**OUTFILE,int*ndets,int*BigCSize,double*LCal,double*HCal,int*iterat,int*burn,int*thin,int*howmny)
 {
 
 
@@ -30,7 +30,7 @@ if(CalFile==NULL) {
     Rprintf("Calibration file should be at %s",*CALPATH);
     error("Error: can't open calibration file.");
 } else {
-    Rprintf("Big calibration file opened successfully.\n");
+    Rprintf("Calibration file opened successfully.\n");
 
     // Now read in
     for(i=0;i<BigCalSize;i++)
@@ -45,58 +45,18 @@ if(CalFile==NULL) {
 
 ///////////////////////////// READ IN DETERMINATIONS /////////////////////////////
 
-//enter determinations and their errors - create them as dynamic arrays and enter them
-//from a separate file using same method as cal curve:
-char labcode[*ndets][50];
-double cage[*ndets],sd[*ndets],depth[*ndets],thick[*ndets],outprob1[*ndets],outprob2[*ndets];
+double cage[*ndets],sd[*ndets];
 int type[*ndets];
- 
-FILE *dets;
 
-double numb1[*ndets],numb2[*ndets],numb3[*ndets],numb4[*ndets],numb5[*ndets],numb6[*ndets];
-int numb7[*ndets];
-
-dets = fopen(*INFILE,"r");
-
-if(dets==NULL) {
-    error("Error: can't open determinations file.");
-} else {
-    Rprintf("Determinations file opened successfully.\n");
-
-    // First get rid of header
-    char temp[100];
-    fgets(temp,100,dets);
-
-    // Now read in as ints and then loop again to convert to double
-    for(i=0;i<*ndets;i++)
-    {
-       fscanf(dets,"%s",labcode[i]);   
-       fscanf(dets,"%lf",&numb1[i]);                       
-       fscanf(dets,"%lf",&numb2[i]);                       
-       fscanf(dets,"%lf",&numb3[i]);                       
-       fscanf(dets,"%lf",&numb4[i]);                       
-       fscanf(dets,"%lf",&numb5[i]);
-       fscanf(dets,"%lf",&numb6[i]); 
-       fscanf(dets,"%i",&numb7[i]); 
-    }
-
-    for(i=0;i<*ndets;i++)
-    {
-       cage[i] = (double)numb1[i]/1000;                       
-       sd[i] = (double)numb2[i]/1000;
-       depth[i] = (double)numb3[i]/100;
-       thick[i] = (double)numb4[i]/100;
-       outprob1[i] = (double)numb5[i];
-       outprob2[i] = (double)numb6[i];
-       type[i] = numb7[i];
-    }
-    
-    Rprintf("Determinations read successfully.\n");
-    
-    fclose(dets);
+Rprintf("================ \n");
+Rprintf("Date  Error Type \n");
+for(i=0;i<*ndets;i++) {
+    cage[i] = c14dates[i];                       
+	sd[i] = c14errors[i];
+	type[i] = datetypes[i];
+    Rprintf("%4.3lf %4.3lf %i \n",cage[i],sd[i],type[i]);
 }
-
-
+Rprintf("================ \n");
 
 ///////////////////////////// CALIBRATION MCMC //////////////////////////    
 

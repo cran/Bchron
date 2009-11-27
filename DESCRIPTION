@@ -1,11 +1,22 @@
 Package: Bchron
 Type: Package
-Title: Create chronologies based on radiocarbon and non-radiocarbon dated depths
-Version: 2.1
-Date: 2008-04-28
-Depends: coda, hdrcde
+Title: Bayesian chronologies via compound Poisson-Gamma processes.
+Version: 3.0
+Date: 2009-11-27
+Depends: hdrcde, coda, svDialogs
 Author: Andrew Parnell
-Maintainer: Andrew Parnell <Andrew.Parnell@tcd.ie>
-Description: This package follows the work of Parnell and Haslett (2007; JRSSC). It runs MCMC, predictions and plots for radiocarbon (and non radiocarbon) dated sediment cores.
-License: GPL (version 2 or later)
-Packaged: Mon May 12 15:21:59 2008; parnella
+Maintainer: Andrew Parnell <Andrew.Parnell@ucd.ie>
+Description: This package takes dating information to produce joint
+        chronological reconstructions for age-depth data. The package
+        allows for: radiocarbon and non-radiocarbon depths, thickness
+        errors, outlying dates, multiple calibration curves, and event
+        prediction. It also produces some pretty pictures, and writes
+        all output to files to allow for further analysis (eg
+        palaeoclimate reconstruction). There is a menu system for
+        users, as well as a command line interface for advanced and/or
+        batch processing.
+License: GPL (>= 2)
+LazyLoad: yes
+Packaged: 2009-12-08 12:21:16 UTC; Andrew
+Repository: CRAN
+Date/Publication: 2009-12-09 08:52:29

@@ -12,64 +12,33 @@
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-void predictrand(char**PARFILE,char**DETSFILE,char**OUTFILE,double *lowddepths,double *highddepths,int *nddepthints, int*ndets,int*numchrons,double*Present,char**OUTLIERFILE)
+void predictrand(char**thelabcode,double*thecage,double*thesd,double*thedepths,double*thethick,double*theoutprob1,double*theoutprob2,int*thetypes,char**PARFILE,char**OUTFILE,double *lowddepths,double *highddepths,int *nddepthints, int*ndets,int*numchrons,double*Present,char**OUTLIERFILE)
 {
 
 ///////////////////////////// READ IN DETERMINATIONS /////////////////////////////
 
-//enter determinations and their errors - create them as dynamic arrays and enter them
-//from a separate file using same method as cal curve:
-char labcode[*ndets][50];
 double cage[*ndets],sd[*ndets],depth[*ndets],thick[*ndets],outprob1[*ndets],outprob2[*ndets];
-int type[*ndets]; 
 double currentddepth[1];
+char labcode[*ndets][50];
+int type[*ndets],i,j; 
 int howmany = 1000;
 
-FILE *dets;
-
-double numb1[*ndets],numb2[*ndets],numb3[*ndets],numb4[*ndets],numb5[*ndets],numb6[*ndets];
-int numb7[*ndets];
-int i;
-
-dets = fopen(*DETSFILE,"r");
-
-if(dets==NULL) {
-    error("Error: can't open determinations file.\n");
-} else {
-    Rprintf("Determinations file opened successfully.\n");
-
-    // First get rid of header
-    char temp[100];
-    fgets(temp,100,dets);
-
-    // Now read in as ints and then loop again to convert to double
-    for(i=0;i<*ndets;i++)
-    {
-       fscanf(dets,"%s",labcode[i]);   
-       fscanf(dets,"%lf",&numb1[i]);                       
-       fscanf(dets,"%lf",&numb2[i]);                       
-       fscanf(dets,"%lf",&numb3[i]);                       
-       fscanf(dets,"%lf",&numb4[i]);                       
-       fscanf(dets,"%lf",&numb5[i]);
-       fscanf(dets,"%lf",&numb6[i]);
-       fscanf(dets,"%i",&numb7[i]);
-    }
-
-    for(i=0;i<*ndets;i++)
-    {
-       cage[i] = (double)numb1[i]/1000;                       
-       sd[i] = (double)numb2[i]/1000;
-       depth[i] = (double)numb3[i]/100;
-       thick[i] = (double)numb4[i]/100;
-       outprob1[i] = (double)numb5[i];
-       outprob2[i] = (double)numb6[i];
-       type[i] = (int)numb7[i];
-    }
-    
-    Rprintf("Determinations read successfully.\n");
-    
-    fclose(dets);
+Rprintf("========================= \n");
+Rprintf("Data (as read in to 3dp): \n");
+for(i=0;i<*ndets;i++)
+{
+   for(j=0;j<50;j++) labcode[i][j] = thelabcode[i][j];	
+   cage[i] = thecage[i];                       
+   sd[i] = thesd[i];
+   depth[i] = thedepths[i];
+   thick[i] = thethick[i];
+   outprob1[i] = theoutprob1[i];
+   outprob2[i] = theoutprob2[i];
+   type[i] = thetypes[i];
+   Rprintf("%s %3.3lf %3.3lf %3.3lf %3.3lf %3.3lf %3.3lf %i \n",labcode[i],cage[i],sd[i],depth[i],thick[i],outprob1[i],outprob2[i],type[i]);
 }
+Rprintf("End of data. \n");
+Rprintf("========================= \n");
 
 ///////////////////// STARTING VALUES ////////////////////////////
 
@@ -85,7 +54,7 @@ int flag1[*ndets],flag2[*ndets];
 double PredEst,alphaT,lambdaT,betaT;
 int OutlierSum1[*ndets],OutlierSum2[*ndets];
 int Nd;
-int j,k,K=1000,wrong=0,count=0;
+int k,K=1000,wrong=0,count=0;
 int stopper, counter;
 double unitemp;
 

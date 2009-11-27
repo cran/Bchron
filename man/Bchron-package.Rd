@@ -3,35 +3,31 @@
 \alias{Bchron}
 \docType{package}
 \title{
-Compound Poisson-Gamma chronologies for radiocarbon and non-radiocarbon dates
+Compound Poisson-Gamma chronologies for radiocarbon and non-radiocarbon dates.
 }
 \description{
 Runs MCMC and predictive distributions for the monotonic piece-wise linear compound Poisson Gamma process.
 Before a run of the Bchron model can commence, the file structures must be in the correct format. Included in the package
 is an example set of data from Glendalough, Ireland. All other cores must be in a similar format for the routines
-to work.
+to work. The latest version of Bchron also contains a function (\code{\link{Bchronproxyplot}}) for plotting proxy data with age uncertainty.
 }
 \details{
 \tabular{ll}{
 Package: \tab Bchron\cr
 Type: \tab Package\cr
-Version: \tab 2.0\cr
-Date: \tab 2008-04-28\cr
-License: \tab GPL (version 2 or later) \cr
+Version: \tab 3.0\cr
+Date: \tab 2009-11-27\cr
+License: \tab GPL (>2) \cr
+LazyLoad: \tab yes\cr
 }
-Installation instructions for basic and first time users:
+Bchron will run on windows, mac or linux systems, though installation instructions are slightly different for each. Instructions for completing installation are as follows:
 
-1. Type library(Bchron)
+1. Create a directory on your hard drive called Bchron. 
 
-2. Now create a directory on your C drive called Bchron (it needs to be directly on the c drive).
+2. Now navigate to the R directory and find the Bchron sub-directory within. On windows this will be C:\\ program files\\ R\\ R-XXXXX\\ library\\ BChron\\ where XXXXX is the 
+version number of R. On other plaforms, this directory can be found by typing .libPaths() at the R command prompt.
 
-3. Within this directory, create three more called Input, Output and CalCurve.
-
-4. Now navigate to C:\\ program files\\ R\\ R-XXXXX\\ library\\ BChron\\ Data. In here there should be a file called Rdata.zip
-
-5. Double click on it and move the files Glendalough.dat, GlendaloughEventDepthsAlnus.txt and Glendaloughddepths.txt to the input directory.
-
-6. Move the IntCal04.bch file to the CalCurve directory.
+3. In this directory, there there should be three subdirectories called Input, Output, and CalCurve. Copy these to the Bchron directory you created in step 1.
 
 Everything is now set up.
 
@@ -41,30 +37,28 @@ Example full model run (with Glendalough.dat):
 
 2. Type Bchronmenu() and choose option 1.
 
-3. If you've followed the steps above you should not need to change the default path, you just need to tell it that the file name is Glendalough.
+3. Locate your Bchron directory, and select IntCal04.bch as your calibration curve and Glendalough.dat as your input file. All other options
+can be left as default.
 
 4. Now choose option 2 to calibrate the radiocarbon dates.
 
-5. Choose option 3 and short to do a run of the Bchron model.
+5. Choose option 3 and 'short' to do a short run of the Bchron model.
 
 6. Choose option 4 to run the prediction stage and create a plot of the data.
 
 Once a satisfactory short run has been obtained, a long run should be undertaken. The long run will take much longer
 than the short run, but will only be required once.
 
-
 Example event prediction stage (with GlendaloughEventDepthsAlnus.txt)
 
-1. Type Bchronmenu() and choose Option 1.
+1. Follow the steps above, and now choose option 5 for event prediction.
 
-2. Enter the data as instructed
+2. Type Alnus as the name of the event.
 
-3. Assuming a run of the Bchron model has already been done (as above) and that the file GlendaloughEventDepthsAlnus.txt is in the input directory, choose option 5
-
-6. Check the output directory for GlendaloughEventAgesAlnus.txt which will contain 95\% HDR age intervals for the depths of interest.
+3. Check the output directory for GlendaloughEventAgesAlnus.txt which will contain 95\% HDR age intervals for the depths of interest.
 
 Other cores can be created in a spirit similar to that found in the Glendalough.dat file. This example input file has
-5 radiocarbon dates (and the top of the core). The columns are tab
+5 radiocarbon dates and a non-radiocarbon date for the top of the core. The columns are tab
 delimited and represent the lab code of the sample, the radiocarbon age, the sample standard error, the depth (in cm)
 at which it was found, the thickness of the sample in cm. If the thickness is unknown, zero is acceptable. The next
 two columns contain the probabilities of being an outlier. The first probability identifies censored outliers as proposed
@@ -73,25 +67,15 @@ column indicates whether this date is a radiocarbon date (type 1), a uniformly d
 distributed date (type 3). For uniform dates, the standard deviation value is taken to be the distance to the upper and 
 lower limits. Type 3 dates are permitted to be outliers, with probabilities as given. Type 2 dates are not allowed to be
 outliers; the outlier probabilities for these dates are ignored.
-
 }
-
-\author{
-Andrew Parnell <Andrew.Parnell@tcd.ie>
-}
-
 \references{
-Haslett and Parnell (2008), A simple monotone process with application to radiocarbon-dated depth chronologies.
-Applied Statistics 57 (5), 1--20.
-
-Christen, J. A. (1994). Summarizing a set of radiocarbon determinations: A robust approach.
-Applied Statistics 43 (3), 489 -- 503.
+Haslett and Parnell (2008, JRSSC, 57:399-418) and Parnell et al (2008, QSR, 27(19-20):1872-1885)
+}
+\author{
+Andrew Parnell <Andrew.Parnell@ucd.ie>
 }
 \seealso{
-\code{\link{Bchronmenu}}
-}
-\examples{
-## See Bchronmenu()
+See \code{\link{Bchronmenu}} for examples.
 }
 \keyword{dplot}
 \keyword{programming}
@@ -99,3 +83,5 @@ Applied Statistics 43 (3), 489 -- 503.
 \keyword{nonparametric}
 \keyword{smooth}
 \keyword{package}
+
+
