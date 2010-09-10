@@ -1,4 +1,5 @@
-Bchronconvergecheck <- function(Bchrondata,dates=FALSE) {
+Bchronconvergecheck <-
+function(Bchrondata,dates=FALSE) {
 
 # Get the number of determinations
 ndet <- nrow(Bchrondata$input)
@@ -50,3 +51,4 @@ readline()
 invisible()
 
 }
+

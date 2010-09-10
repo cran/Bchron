@@ -102,6 +102,33 @@ double linearinterp(int n, double newx, double *a, double *b)
   return(-999.0);
 }
 
+double densinterp(int nrows, int ncols, double newx, double a[nrows][ncols],double b[nrows][ncols],int choosecol,double outval)
+{
+    double newvalue;
+    int i;
+
+	// This function is similar to the linear interp function but instead forces values
+	// outside the range to be the value outval (usually zero).
+
+	if( (newx < a[0][choosecol]) | (newx > a[nrows-1][choosecol]) ) {
+ 		return(outval);
+	} else {
+	    for(i=0; i<nrows-1; i++)
+    	{
+        	if (((newx >= a[i][choosecol]) & (newx <= a[i+1][choosecol])) | ((newx <= a[i][choosecol]) & (newx >= a[i+1][choosecol])))
+	        {
+    	            newvalue = b[i][choosecol] + ((newx-a[i][choosecol])/(a[i+1][choosecol]-a[i][choosecol]))*(b[i+1][choosecol]-b[i][choosecol]);
+        	        //if(newx==a[i]) newvalue = b[i];
+            	    return(newvalue);
+                	//break;
+	        }        
+    	}
+	}
+  
+  Rprintf("Weird density interpolation. Don't trust these results!\n");
+  return(-999.0);
+}
+
 double Max2 (double a, double b)
 {
 	// find the max of 2 numbers

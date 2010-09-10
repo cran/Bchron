@@ -23,7 +23,7 @@ The path to the Bchron directory. Defaults to c:/Bchron (windows) or ~/Bchron (u
 A collection of depths at which chronological ages will be calculated. Default is top dated depth to bottom dated depth, length 200.
 }
   \item{calibname}{
-The name of the calibratiion curve .bch file used. Defaults to the Northern Hemisphere 2004 internationally agreed calibration curve.
+The name of the calibratiion curve .bch file used. Defaults to the Northern Hemisphere 2009 internationally agreed calibration curve.
 }
   \item{extractdate}{
 The extracted date of the core in thousands of years before present. Defaults to the year 2000 (=-0.05 k cal years BP).

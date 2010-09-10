@@ -93,29 +93,35 @@ Dates <- InputTemp[,2]
 Sds <- InputTemp[,3]
 Types <- InputTemp[,8]
 C14dates <- Dates[Types==1]
-C14sds <- Sds[Types==1]
-lowdates <- round(C14dates-3*C14sds,0)
-highdates <- round(C14dates+3*C14sds,0)
-if((lowdates-5)<0 || (highdates-5)>length(CalCurveTemp[,1]) ) {
-  cat("error\n")
-  cat("14C dates are outside the range of the calibration curve. \n")
-  cat(paste("Check:",Bchrondata$inputfile,"and",Bchrondata$calibcurvefile,"\n"))
-  cat("Press <Enter> to continue...")
-  readline()
-  invisible()
-}
-
-lowcalagelookup <- CalCurveTemp[lowdates-5,1]
-highcalagelookup <- CalCurveTemp[highdates-5,1]
-if(any(is.na(lowcalagelookup)) || any(is.na(highcalagelookup)) ) {
-  cat("error\n")
-  cat("14C dates are outside the range of the calibration curve. \n")
-  cat(paste("Check:",Bchrondata$inputfile,"and",Bchrondata$calibcurvefile,"\n"))
-  cat("Press <Enter> to continue...")
-  readline()
-  invisible()
+if(length(C14dates)==0) {
+    cat("\n Notice: no 14C dates found - proceed without calibration curve checking. \n")
 } else {
-  cat("done\n")
+    C14sds <- Sds[Types==1]
+    lowdates <- round(C14dates-3*C14sds,0)
+    highdates <- round(C14dates+3*C14sds,0)
+    if(any((lowdates-5)<0) || any((highdates-5)>length(CalCurveTemp[,1])) ) {
+      cat("error\n")
+      cat("14C dates are outside the range of the calibration curve. \n")
+      cat(paste("Check:",Bchrondata$inputfile,"and",Bchrondata$calibcurvefile,"\n"))
+      cat("Press <Enter> to continue...")
+      readline()
+      invisible()
+   } else {
+
+      lowcalagelookup <- CalCurveTemp[lowdates-5,1]
+      highcalagelookup <- CalCurveTemp[highdates-5,1]
+      if(any(is.na(lowcalagelookup)) || any(is.na(highcalagelookup)) ) {
+         cat("error\n")
+         cat("14C dates are outside the range of the calibration curve. \n")
+         cat(paste("Check:",Bchrondata$inputfile,"and",Bchrondata$calibcurvefile,"\n"))
+         cat("Press <Enter> to continue...")
+         readline()
+         invisible()
+      } else {
+         cat("done\n")
+      }
+  }
+
 }
 
 # Check output files for mis-matches (if they exist)

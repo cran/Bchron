@@ -1,4 +1,5 @@
-Bchronmenu <- function ()
+Bchronmenu <-
+function ()
 {
 EXIT <- FALSE
 
@@ -239,3 +240,4 @@ if(choose==6) {
 }
 
 }
+

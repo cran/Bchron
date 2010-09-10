@@ -1,4 +1,5 @@
-Bchronpredictevent <- function(Bchrondata,event="Event",numchron=10000) {
+Bchronpredictevent <-
+function(Bchrondata,event="Event",numchron=10000) {
 
 cat("Predict ages for an event in the core. \n")
 
@@ -52,3 +53,4 @@ out <- .C("predictrand",
 cat("Completed!\n")
 
 }
+

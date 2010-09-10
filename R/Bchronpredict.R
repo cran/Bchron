@@ -1,4 +1,5 @@
-Bchronpredict <- function(Bchrondata,numchron=10000,defaults=FALSE) {
+Bchronpredict <-
+function(Bchrondata,numchron=10000,defaults=FALSE) {
 
 cat("Predict ages for the entire core. \n")
 
@@ -59,3 +60,4 @@ cat("Completed!\n")
 cat("\n")
 
 }
+

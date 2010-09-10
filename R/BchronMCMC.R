@@ -1,4 +1,5 @@
-BchronMCMC <- function(Bchrondata,iterations=1e+05,burnin=10000,thinby=8,howmany=2000,defaults=FALSE,testrun=FALSE) {
+BchronMCMC <-
+function(Bchrondata,iterations=1e+05,burnin=10000,thinby=8,howmany=2000,defaults=FALSE,testrun=FALSE) {
 
 cat("Setting up Bchron model run... \n")
 
@@ -76,3 +77,4 @@ if(Bchrondata$RUN==1) {
 }
 
 }
+

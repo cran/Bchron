@@ -66,7 +66,7 @@ for(k=0;k<*ndets;k++) OutlierSum1[k] = 0.0;
 for(k=0;k<*ndets;k++) OutlierSum2[k] = 0.0;
 
 // This is a tricky one - need to get the design depths in each segment
-int lencurrentdepths;
+int lencurrentdepths,result;
 
 // Calculate the differences of the depths
 double depthdiff[*ndets-1];
@@ -88,30 +88,30 @@ if(pars==NULL) {
 
        for(j=0;j<*ndets;j++)
        {  
-         fscanf(pars,"%lf",&thetas[j]);                       
+         result=fscanf(pars,"%lf",&thetas[j]);                       
        } 
        for(j=0;j<*ndets;j++)
        {  
-         fscanf(pars,"%lf",&mydepths[j]);                       
+         result=fscanf(pars,"%lf",&mydepths[j]);                       
        } 
        for(j=0;j<*ndets;j++)
        {  
-         fscanf(pars,"%i",&flag1[j]);                       
+         result=fscanf(pars,"%i",&flag1[j]);                       
        } 
        for(j=0;j<*ndets;j++)
        {  
-         fscanf(pars,"%lf",&shift1[j]);                       
+         result=fscanf(pars,"%lf",&shift1[j]);                       
        } 
        for(j=0;j<*ndets;j++)
        {  
-         fscanf(pars,"%i",&flag2[j]);                       
+         result=fscanf(pars,"%i",&flag2[j]);                       
        } 
        for(j=0;j<*ndets;j++)
        {  
-         fscanf(pars,"%lf",&shift2[j]);                       
+         result=fscanf(pars,"%lf",&shift2[j]);                       
        } 
-       fscanf(pars,"%lf",&mean);                       
-       fscanf(pars,"%lf",&psi);                       
+       result=fscanf(pars,"%lf",&mean);                       
+       result=fscanf(pars,"%lf",&psi);                       
 
     alphaT = (2-p)/(p-1);
     lambdaT = pow(mean,(2-p))/(psi*(2-p));

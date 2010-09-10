@@ -1,4 +1,5 @@
-Bchronplot <- function(Bchrondata,plot=TRUE,dates=TRUE,datelabels=FALSE,chrons=TRUE,dateselect=NULL,limits=NULL,dateheight=mean(diff(Bchrondata$input[,4]))/200,chronwidth=0.95,datecolour="black",chroncolour="blue",outcolour="red",transp=0.5,outprob=0.1,legendloc="topleft",leghoriz=TRUE,...) {
+Bchronplot <-
+function(Bchrondata,plot=TRUE,dates=TRUE,datelabels=FALSE,chrons=TRUE,dateselect=NULL,limits=NULL,dateheight=mean(diff(Bchrondata$input[,4]))/200,chronwidth=0.95,datecolour="black",chroncolour="blue",outcolour="red",transp=0.5,outprob=0.1,legendloc="topleft",leghoriz=TRUE,...) {
 
 if(dates==FALSE & chrons==FALSE) stop("One of dates of chrons must be set as true ")
 
@@ -61,7 +62,7 @@ XLIMIT = c(limits[2],limits[4])
 
 # Plot the Bchron output
 if(plot==TRUE) {
-    newgraphwindow(...)
+    dev.new(...)
     plot(1,1,xlim=XLIMIT,ylim=YLIMIT,xlab="k cal yrs BP",ylab="Depth (m)",type="n",main=paste(Bchrondata$fullname),bty="n",cex.axis=0.6,las=1,xaxt="n",yaxt="n")
     if(datelabels==TRUE) {
         bigstringw <- min(strwidth((Bchrondata$input[,1])))
@@ -159,3 +160,4 @@ if(!is.null(legendloc)) {
 
 cat("Completed!\n")
 }
+

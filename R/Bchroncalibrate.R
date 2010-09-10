@@ -1,4 +1,5 @@
-Bchroncalibrate <- function(Bchrondata,iterations=500000,burnin=50000,thinby=45,howmany=50000,defaults=FALSE) {
+Bchroncalibrate <-
+function(Bchrondata,iterations=500000,burnin=50000,thinby=45,howmany=50000,defaults=FALSE) {
 
 cat("Calibrating radiocarbon dates... \n")
 
@@ -52,3 +53,4 @@ for(i in 1:ncol(Bchrondata$calibdates)) {
 }
 
 }
+

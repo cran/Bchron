@@ -1,4 +1,5 @@
-Bchronload <- function(name,fullname=NULL,path=NULL,outdepths=NULL,calibname="IntCal09",extractdate=-0.05,check=FALSE,full=FALSE) {
+Bchronload <-
+function(name,fullname=NULL,path=NULL,outdepths=NULL,calibname="IntCal09",extractdate=-0.05,check=FALSE,full=FALSE) {
 
 cat("Loading data...\n")
 
@@ -15,7 +16,7 @@ Bchrondata <- list()
 Bchrondata$name <- name
 Bchrondata$fullname <- fullname
 if(is.null(fullname)) Bchrondata$fullname <- Bchrondata$name
-Bchrondata$version <- read.dcf(file=system.file("DESCRIPTION", package="Bchron"),fields="Version")
+Bchrondata$version <- try(read.dcf(file=system.file("DESCRIPTION", package="Bchron"),fields="Version"),silent=TRUE)
 
 # Find the various files
 Bchrondata$path <- path
@@ -72,3 +73,4 @@ if(check==TRUE) {
 return(Bchrondata)
 
 }
+

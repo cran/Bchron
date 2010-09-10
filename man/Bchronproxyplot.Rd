@@ -7,7 +7,7 @@ Plot proxy data with associated chronological unceratinties
 Function produces plots of a proxy data time series, with associated error bands to indicate chronological uncertainty.
 }
 \usage{
-Bchronproxyplot(Bchrondata, proxy, title = NULL, xlabel = "Age (k cal yrs BP)", ylabel = "Proxy", num = 10, col=c("red","red","red"),smooth=FALSE,...)
+Bchronproxyplot(Bchrondata, proxy, title = NULL, xlabel = "Age (k cal yrs BP)", ylabel = "Proxy", num = 10, col = c("red","red", "red"), smooth = FALSE,...)
 }
 \arguments{
   \item{Bchrondata}{
@@ -21,19 +21,19 @@ A vector of proxy observations of the same length as the number of output depths
 A text string giving the title for the plot.
 }
   \item{xlabel}{
-A text string giving the x-axis label for the plot.
+A text string giving the x-axis label for the plot
 }
   \item{ylabel}{
-A text string giving the y-axis label for the plot.
+A text string giving the y-axis label for the plot
 }
   \item{num}{
-The number of sample chronologies to plot.
+The number of sample chronologies to plot
 }
   \item{col}{
-Colours for the mean and 95pc prediction intervals.
+The colour of the lines drawn
 }
   \item{smooth}{
-Whether kernel smoothing should be run on the proxy time series.
+Whether kernel smoothing on the proxy variable should be performed
 }
   \item{\dots}{
 Other arguments, such as the width and height of the plot

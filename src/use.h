@@ -6,6 +6,7 @@ int GetLengthCurrentDepths(double depthlow,double depthhigh,double *ddepth,int l
 int GetCurrentDepths(double depthlow,double depthhigh,double *ddepth,int length,double *current);
 int GetCurrentDepthRows(double depthlow,double depthhigh,double *ddepth,int length,int *rows);
 double linearinterp(int n, double newx, double *a, double *b);
+double densinterp(int nrows, int ncols, double newx, double a[nrows][ncols],double b[nrows][ncols],int choosecol,double outval);
 double Max2 (double a, double b);
 double rtruncn (double a, double b);
 double truncatedwalk (double old, double sd, double low, double high);

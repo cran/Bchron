@@ -22,7 +22,7 @@ int howmany=*howmny,thinby=*thin,burnin=*burn;
 double BigC14[BigCalSize],BigSigma[BigCalSize];
 
 FILE *CalFile;
-int i;
+int i,result;
 
 CalFile = fopen(*CALPATH,"r");
 
@@ -35,8 +35,8 @@ if(CalFile==NULL) {
     // Now read in
     for(i=0;i<BigCalSize;i++)
     {
-       fscanf(CalFile,"%lf",&BigC14[i]);                       
-       fscanf(CalFile,"%lf",&BigSigma[i]);                                           
+       result=fscanf(CalFile,"%lf",&BigC14[i]);                       
+       result=fscanf(CalFile,"%lf",&BigSigma[i]);                                           
     }
 
     fclose(CalFile);
@@ -167,8 +167,8 @@ fclose(parameterfile);
 c1 = clock();
 Rprintf("Completed!\n");
 Rprintf("Elapsed time in sec: %5.2f\n",(float) (c1 - c0)/CLOCKS_PER_SEC,2);
-Rprintf("Elapsed time in minutes: %5.2f\n",(float) (c1 - c0)/(60*CLOCKS_PER_SEC));    
-Rprintf("Elapsed time in hours: %5.2f\n",(float) (c1 - c0)/(60*60*CLOCKS_PER_SEC));
+Rprintf("Elapsed time in minutes: %5.2f\n",(float) (c1 - c0)/(60ul*CLOCKS_PER_SEC));    
+Rprintf("Elapsed time in hours: %5.2f\n",(float) (c1 - c0)/(60ul*60ul*CLOCKS_PER_SEC));
 
 
 }

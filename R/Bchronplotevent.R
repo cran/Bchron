@@ -1,4 +1,5 @@
-Bchronplotevent <- function(Bchrondata,depth=NULL,slice=NULL,event=NULL,eventname=NULL,nbreaks=30,histcolour="light blue",...)
+Bchronplotevent <-
+function(Bchrondata,depth=NULL,slice=NULL,event=NULL,eventname=NULL,nbreaks=30,histcolour="light blue",...)
 {
 
 if(is.null(depth) & is.null(slice) & is.null(event)) {
@@ -46,7 +47,7 @@ if(!is.null(slice)) {
     Bchrondata$chrons <- as.matrix(read.table(Bchrondata$chronsfile))
 
     # create some plots
-    newgraphwindow(...)
+    dev.new(...)
     hist(Bchrondata$chrons[,slice],main=paste(Bchrondata$fullname,": ",depth," cm",sep=""),freq=FALSE,col=histcolour,xlab="k cal yrs BP",las=1,breaks=nbreaks)
     grid()
     mtext(paste("Bchron",ifelse(Bchrondata$version>0,paste(" v",Bchrondata$version),""),sep=""),side=1,line=4,adj=1,cex=0.6)
@@ -61,7 +62,7 @@ if(!is.null(event)) {
     eventage <- as.matrix(read.table(eventagefile))
 
     # create some plots
-    newgraphwindow(...)
+    dev.new(...)
     hist(eventage,main=paste(Bchrondata$fullname,": ",eventname,sep=""),freq=FALSE,col=histcolour,xlab="k cal yrs BP",las=1,breaks=nbreaks)
     grid()
     mtext(paste("Bchron",ifelse(Bchrondata$version>0,paste(" v",Bchrondata$version),""),sep=""),side=1,line=4,adj=1,cex=0.6)
@@ -70,3 +71,4 @@ if(!is.null(event)) {
 
 
 }
+

@@ -1,4 +1,5 @@
-Bchroncreatecalcurve <- function() {
+Bchroncreatecalcurve <-
+function() {
 
 cat("Create user calibration curve. \n\n")
 
@@ -81,3 +82,4 @@ cat("Calibration curve set. \n")
 }
 
 }
+

@@ -17,48 +17,32 @@ void R_CheckUserInterrupt(void);
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-void cpg(double*thecage,double*thesd,double*thedepths,double*thethick,double*theoutprob1,double*theoutprob2,int*thetypes,char**CALPATH,char**OUTFILE,int*ndets,int*BigCsize,double*LCal,double*HCal,int*m,int*burnin,int*howmany,int*thinby,int*fails)
+void cpgquick(double**calgridx,double**calgridy,double*thetainits,double*meaninit,double*psiinit,double*cage,double*sd,double*depth,double*thick,double*theoutprob1,double*theoutprob2,int*type,char**OUTFILE,int*ndets,double*LowCal,double*HighCal,int*m,int*burnin,int*howmany,int*thinby,int*fails)
 {
 
-/////////////////////////////////// CONSTANTS ////////////////////////////////////
-// Some constants for reading stuff in
-// len is calcurve length
-int BigCalSize=*BigCsize;
-double LowCal=*LCal, HighCal=*HCal;
-int IntLowCal = (int)(LowCal*1000);
-// Parameters to use on outlier variance
-double beta1=2.0,beta2=100.0;
-// Let fails be 0 if it succeeds and 1 if it fails
-*fails=0;
-///////////////////////////// READ IN CALIBRATION CURVE /////////////////////////////
+///////////////////////////// READ IN CALIBRATED DATES /////////////////////////////
 
-double BigC14[BigCalSize],BigSigma[BigCalSize];
+double thecalgridx[512][*ndets],thecalgridy[512][*ndets];
 
-FILE *CalFile;
-int i,result;
 
-CalFile = fopen(*CALPATH,"r");
+int i,j;
+for(i=0;i<512;i++) {
+    for(j=0;j<*ndets;j++) thecalgridx[i][j] = calgridx[j][i+3];
+    for(j=0;j<*ndets;j++) thecalgridy[i][j] = calgridy[j][i+3];
+}
 
-if(CalFile==NULL) {
-    error("Error: can't open calibration curve file.\n");
-    *fails=1;
-    return;
-} else {
-    Rprintf("Big calibration file opened successfully.\n");
-
-    // Now read in
-    for(i=0;i<BigCalSize;i++)
-    {
-       result=fscanf(CalFile,"%lf",&BigC14[i]);                       
-       result=fscanf(CalFile,"%lf",&BigSigma[i]);                                           
-    }
-
-    fclose(CalFile);
-}	
+/*
+// Test the new densinterp function
+double myx = 10.14533,ans;
+ans = densinterp(512,*ndets,myx,thecalgridx,thecalgridy,2,0.0);
+Rprintf("minx = %lf, maxx = %lf, ans=%lf \n",thecalgridx[0][2],thecalgridx[511][2],ans);
+*/
 
 ///////////////////////////// READ IN DETERMINATIONS /////////////////////////////
+// This is mostly pointless, but gives a few extra bits
 
 //enter determinations and their errors - create them as dynamic arrays and enter them
+/*
 double cage[*ndets],sd[*ndets],depth[*ndets],thick[*ndets],outprob1[*ndets],outprob2[*ndets];
 int type[*ndets]; 
 
@@ -66,8 +50,6 @@ Rprintf("========================= \n");
 	Rprintf("Data (as read in to 3dp): \n");
     for(i=0;i<*ndets;i++)
     {
-       cage[i] = thecage[i];                       
-       sd[i] = thesd[i];
        depth[i] = thedepths[i];
        thick[i] = thethick[i];
        outprob1[i] = theoutprob1[i];
@@ -77,8 +59,7 @@ Rprintf("========================= \n");
     }
     Rprintf("End of data. \n");
     Rprintf("========================= \n");
-
-
+*/
 ///////////////////// STARTING VALUES ////////////////////////////
 
 // Create starting values for dates
@@ -89,20 +70,20 @@ double thetanewrat,shift1newrat,psinewrat,meannewrat,shift2newrat;
 double currentdepths[*ndets];
 int flag1[*ndets],flag1new,flag2[*ndets],flag2new;
 int k,badcount;
-double p=1.2,mean=5.0,meannew,psi=2.0,psinew; // Starting values
+double p=1.2,mean=*meaninit,meannew,psi=*psiinit,psinew; // Starting values
 double hi = 10000000; // big number to represent infinity
 
 GetRNGstate();
 for(i=0;i<*ndets;i++) 
 {
     // Estimate starting values for theta, could do better here with linearinterp
-    thetaall[i] = cage[i]+runif(-0.001,0.001);
+    thetaall[i] = thetainits[i];
     flag1[i] = 0;
 	shift1[i] = 0;
     flag2[i] = 0;
 	shift2[i] = 0;
-	priorp1[i] = outprob1[i];
-    priorp2[i] = outprob2[i];
+	priorp1[i] = theoutprob1[i];
+    priorp2[i] = theoutprob2[i];
 }
 // depth differences
 double depthdiff[*ndets-1];
@@ -188,27 +169,9 @@ for (iter=0;iter<*m;iter++)
     // Use thickness to update the current set of depths used for this particular run
     for(k=0;k<*ndets;k++) {
         currentdepths[k] = runif(depth[k]-thick[k]/2,depth[k]+thick[k]/2);
-        // Line to prevent (very rare) duplicates - not used
-        //if(k>0) while(currentdepths[k]==currentdepths[k-1]) currentdepths[k] = runif(depth[k]-thick[k]/2,depth[k]+thick[k]/2);
     }
     // And get differences
     diff(currentdepths,ndets,depthdiff);
-    // Check for places where the random depths may have swapped everything over
-    baddepth = Min(depthdiff,*ndets-1);
-    badcount=0;
-    while(baddepth<0) {
-        // And now re-order all these based on the new currentdepths
-        ReOrder(currentdepths,cage,sd,depth,thick,priorp1,priorp2,type,*ndets);
-        diff(currentdepths,ndets,depthdiff);
-        baddepth = Min(depthdiff,*ndets-1);
-
-        badcount++;
-        if(badcount==200) {
-            Rprintf("currentdepth cage sd depth thick \n",badcount);
-            *fails=1;
-            return;
-        }
-    }
 
     ///////////////////////////////// THETAS ////////////////////////////////////////
 
@@ -234,12 +197,12 @@ for (iter=0;iter<*m;iter++)
     
         	if(q==0)
 	       	{
-		      	thetanew[0] = truncatedwalk(thetaall[0],0.1*((double)badcount+1),LowCal,thetaall[1]);
-			    thetanewrat = truncatedrat(thetaall[0],0.1*((double)badcount+1),LowCal,thetaall[1],thetanew[0]);
+		      	thetanew[0] = truncatedwalk(thetaall[0],0.1*((double)badcount+1),*LowCal,thetaall[1]);
+			    thetanewrat = truncatedrat(thetaall[0],0.1*((double)badcount+1),*LowCal,thetaall[1],thetanew[0]);
 		    } else if(q==*ndets-1)
 		    {
-			    thetanew[*ndets-1] = truncatedwalk(thetaall[*ndets-1],0.1*((double)badcount+1),thetaall[*ndets-2],HighCal);
-			    thetanewrat = truncatedrat(thetaall[*ndets-1],0.1*((double)badcount+1),thetaall[*ndets-2],HighCal,thetanew[*ndets-1]);
+			    thetanew[*ndets-1] = truncatedwalk(thetaall[*ndets-1],0.1*((double)badcount+1),thetaall[*ndets-2],*HighCal);
+			    thetanewrat = truncatedrat(thetaall[*ndets-1],0.1*((double)badcount+1),thetaall[*ndets-2],*HighCal,thetanew[*ndets-1]);
     		} else {
 	       		thetanew[q] = truncatedwalk(thetaall[q],0.1*((double)badcount+1),thetaall[q-1],thetaall[q+1]);		
 		      	thetanewrat = truncatedrat(thetaall[q],0.1*((double)badcount+1),thetaall[q-1],thetaall[q+1],thetanew[q]);
@@ -256,21 +219,22 @@ for (iter=0;iter<*m;iter++)
             }
         }    
 		
-	    //calculate old likelihood on first iteration:
+	    // Calculate old likelihood on first iteration:
         if(iter==0) 
         {
             // Radiocarbon dates 
             if(type[q]==1) {
-                pixtheta[q] = dnorm(cage[q],BigC14[(int)(thetaall[q]*1000+0.5)-IntLowCal]+flag1[q]*shift1[q]+flag2[q]*shift2[q],sqrt(pow(sd[q],2)+pow(BigSigma[(int)(thetaall[q]*1000+0.5)-IntLowCal],2)),1);
-            
+                //pixtheta[q] = dnorm(cage[q],BigC14[(int)(thetaall[q]*1000+0.5)-IntLowCal]+flag1[q]*shift1[q]+flag2[q]*shift2[q],sqrt(pow(sd[q],2)+pow(BigSigma[(int)(thetaall[q]*1000+0.5)-IntLowCal],2)),1);
+            	pixtheta[q] = log(densinterp(512,*ndets,thetaall[q],thecalgridx,thecalgridy,q,0.0));
+
                 for(i=0;i<*ndets-1;i++) 
                 pixtheta[q] += log(dtweediep1(thetadiff[i],p,mean*depthdiff[i],psi/pow(depthdiff[i],p-1)));
             }
 
             // Gaussian dates 
             if(type[q]==2) {
-                pixtheta[q] = dnorm(thetaall[q],cage[q]+flag1[q]*shift1[q]+flag2[q]*shift2[q],sd[q],1);
-            
+               	pixtheta[q] = dnorm(thetaall[q],cage[q]+flag1[q]*shift1[q]+flag2[q]*shift2[q],sd[q],1);
+				
                 for(i=0;i<*ndets-1;i++) 
                 pixtheta[q] += log(dtweediep1(thetadiff[i],p,mean*depthdiff[i],psi/pow(depthdiff[i],p-1)));
             }
@@ -287,8 +251,9 @@ for (iter=0;iter<*m;iter++)
 
         //calculate new likelihood:
         if(type[q]==1) {
-            piytheta[q] = dnorm(cage[q],BigC14[(int)(thetanew[q]*1000+0.5)-IntLowCal]+flag1[q]*shift1[q]+flag2[q]*shift2[q],sqrt(pow(sd[q],2)+pow(BigSigma[(int)(thetanew[q]*1000+0.5)-IntLowCal],2)),1);
-            
+            //piytheta[q] = dnorm(cage[q],BigC14[(int)(thetanew[q]*1000+0.5)-IntLowCal]+flag1[q]*shift1[q]+flag2[q]*shift2[q],sqrt(pow(sd[q],2)+pow(BigSigma[(int)(thetanew[q]*1000+0.5)-IntLowCal],2)),1);
+            piytheta[q] = log(densinterp(512,*ndets,thetanew[q],thecalgridx,thecalgridy,q,0.0));
+
             for(i=0;i<*ndets-1;i++) {
                 piytheta[q] += log(dtweediep1(thetanewdiff[i],p,mean*depthdiff[i],psi/pow(depthdiff[i],p-1))); 
             }
@@ -299,6 +264,7 @@ for (iter=0;iter<*m;iter++)
             for(i=0;i<*ndets-1;i++) 
                 piytheta[q] += log(dtweediep1(thetanewdiff[i],p,mean*depthdiff[i],psi/pow(depthdiff[i],p-1)));
         } else if(type[q]==3) {
+
             piytheta[q] = dunif(thetanew[q],cage[q]+flag1[q]*shift1[q]+flag2[q]*shift2[q]-sd[q],cage[q]+flag1[q]*shift1[q]+flag2[q]*shift2[q]+sd[q],1);
             
             for(i=0;i<*ndets-1;i++) 
@@ -322,6 +288,10 @@ for (iter=0;iter<*m;iter++)
         }
 
     }	
+
+	/////////////////////// OUTLIER UPDATING - TURN OFF FOR QUICK BCHRON ///////////////////////
+
+	/*
 
     // For all dates (radiocarbon or not) the outlier parameters are updated
     for(q1=0; q1<*ndets; q1++)
@@ -458,6 +428,7 @@ for (iter=0;iter<*m;iter++)
 		}
         
 	}
+	*/
 
     ///////////////////////////////// Tweedie ////////////////////////////////////////
 
@@ -504,7 +475,6 @@ for (iter=0;iter<*m;iter++)
     // Sort out the RNG state
     PutRNGstate();
 
-	}
 // End of iterations loop
 }
 
@@ -515,5 +485,6 @@ Rprintf("Completed!\n");
 Rprintf("Elapsed time in sec: %5.2f\n",(float) (c1 - c0)/CLOCKS_PER_SEC,2);
 Rprintf("Elapsed time in minutes: %5.2f\n",(float) (c1 - c0)/(60ul*CLOCKS_PER_SEC));    
 Rprintf("Elapsed time in hours: %5.2f\n",(float) (c1 - c0)/(60ul*60ul*CLOCKS_PER_SEC));
+
 
 }

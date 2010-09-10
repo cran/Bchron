@@ -1,4 +1,5 @@
-hdr2.den <- function (x = NULL, prob = c(50, 95, 99), den = NULL, h = NULL, ylab = "", ...)
+hdr2.den <-
+function (x = NULL, prob = c(50, 95, 99), den = NULL, h = NULL, ylab = "", ...)
 {
     library(hdrcde)
 
@@ -31,3 +32,4 @@ hdr2.den <- function (x = NULL, prob = c(50, 95, 99), den = NULL, h = NULL, ylab
     }
     return(hdr)
 }
+
