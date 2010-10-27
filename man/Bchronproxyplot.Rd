@@ -7,7 +7,7 @@ Plot proxy data with associated chronological unceratinties
 Function produces plots of a proxy data time series, with associated error bands to indicate chronological uncertainty.
 }
 \usage{
-Bchronproxyplot(Bchrondata, proxy, title = NULL, xlabel = "Age (k cal yrs BP)", ylabel = "Proxy", num = 10, col = c("red","red", "red"), smooth = FALSE,...)
+Bchronproxyplot(Bchrondata, proxy, title = NULL, xlabel = "Age (k cal yrs BP)", ylabel = "Proxy", num = 1000, col = "blue", meancol="red",transp=0.1,...)
 }
 \arguments{
   \item{Bchrondata}{
@@ -27,21 +27,23 @@ A text string giving the x-axis label for the plot
 A text string giving the y-axis label for the plot
 }
   \item{num}{
-The number of sample chronologies to plot
+The number of sample chronologies to plot, default set at 1000
 }
   \item{col}{
 The colour of the lines drawn
 }
-  \item{smooth}{
-Whether kernel smoothing on the proxy variable should be performed
+  \item{meancol}{
+The colour of the line drawn to represent the mean chronology
+}
+  \item{transp}{
+The degree of transparancy of individual chronology lines drawn
 }
   \item{\dots}{
 Other arguments, such as the width and height of the plot
 }
 }
 \details{
-The plots produces show a number of sample proxy series based on different chronological samples (the number of these is controlled by num), together with an estimate of the 95% range of 
-uncertainty in the proxy series. As the uncertainty is in the horizontal axis, uncertainty bounds can sometimes cross each other if there is an inflexion point.
+The plots produces show a number of sample proxy series based on different chronological samples (the number of these is controlled by num).
 }
 \references{
 Haslett and Parnell (2008, JRSSC, 57:399-418) and Parnell et al (2008, QSR, 27(19-20):1872-1885)

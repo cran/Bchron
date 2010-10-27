@@ -1,8 +1,8 @@
 Package: Bchron
 Type: Package
 Title: Bayesian chronologies via compound Poisson-Gamma processes.
-Version: 3.1.1
-Date: 2010-09-10
+Version: 3.1.2
+Date: 2010-10-27
 Depends: hdrcde, coda, svDialogs
 Author: Andrew Parnell
 Maintainer: Andrew Parnell <Andrew.Parnell@ucd.ie>
@@ -14,9 +14,10 @@ Description: This package takes dating information to produce joint
         all output to files to allow for further analysis (eg
         palaeoclimate reconstruction). There is a menu system for
         users, as well as a command line interface for advanced and/or
-        batch processing.
+        batch processing. This version contains an update to produce
+        better plots of proxy data via the function Bchronproxyplot.
 License: GPL (>= 2)
 LazyLoad: yes
-Packaged: 2010-09-10 13:29:46 UTC; aparnell
+Packaged: 2010-10-27 11:39:42 UTC; aparnell
 Repository: CRAN
-Date/Publication: 2010-09-10 14:13:37
+Date/Publication: 2010-10-27 14:29:05
