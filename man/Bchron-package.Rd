@@ -10,6 +10,8 @@ Runs MCMC and predictive distributions for the monotonic piece-wise linear compo
 Before a run of the Bchron model can commence, the file structures must be in the correct format. Included in the package
 is an example set of data from Glendalough, Ireland. All other cores must be in a similar format for the routines
 to work. The latest version of Bchron also contains a function (\code{\link{Bchronproxyplot}}) for plotting proxy data with age uncertainty.
+
+ ***IMPORTANT NOTE*** This version fixes a serious bug which was present in versions 3.1.1 and 3.1.2. You should have noticed this bug anyway when you ran the Bchronconvergecheck function.
 }
 \details{
 \tabular{ll}{

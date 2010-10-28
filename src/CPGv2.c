@@ -389,7 +389,7 @@ for (iter=0;iter<*m;iter++)
 		}
         
 	}
-	if(iter < 687) {
+	//if(iter < 687) {
 	// Only going to do this bit for the first 686 iterations - all the rest is done for 687
 
 
@@ -504,7 +504,7 @@ for (iter=0;iter<*m;iter++)
     // Sort out the RNG state
     PutRNGstate();
 
-	}
+	//}
 // End of iterations loop
 }
 
