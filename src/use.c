@@ -246,13 +246,13 @@ double dtweedielogwsmallp(double y, double phi, double power)
 	int hij,lowj;
 
     if (power < 1) 
-        exit(-99);
+        error("-99\n");
 	if (power > 2) 
-		exit(-99);
+        error("-99\n");
     if (phi <= 0)
-		exit(-99);
+        error("-99\n");
     if (y <= 0)
-		exit(-99);
+        error("-99\n");
     p = power;
     a = (2 - p)/(1 - p);
     a1 = 1 - a;

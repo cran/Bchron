@@ -21,7 +21,7 @@ if true, checks the individually calibrated dates for convergence. Otherwise che
 }
 }
 \details{
-Uses the package \code{coda} Geweke diagnostic to perform a convergence check on a single MCMC chain. Note that this is not the only method of convergence checking. Also provides some
+Uses the package coda Geweke diagnostic to perform a convergence check on a single MCMC chain. Note that this is not the only method of convergence checking. Also provides some
 context for how well the model appears to have converged.
 }
 \references{

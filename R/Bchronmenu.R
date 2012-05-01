@@ -1,5 +1,4 @@
-Bchronmenu <-
-function ()
+Bchronmenu <- function ()
 {
 EXIT <- FALSE
 
@@ -29,7 +28,7 @@ choose <- menu(choices, title = title)
 # Load in data
 if(choose == 1) {
   
-    path <-  guiDlgDir(title="Please select your Bchron directory")    
+    path <-  dlgDir(title="Please select your Bchron directory")$res    
   
 #    BADPATH <- TRUE
 #    while(BADPATH==TRUE) {
@@ -240,4 +239,3 @@ if(choose==6) {
 }
 
 }
-
