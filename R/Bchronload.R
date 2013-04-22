@@ -70,7 +70,7 @@ if(check==TRUE) {
     Bchroncheck(Bchrondata)
 }
 
+class(Bchrondata) = "Bchron"
 return(Bchrondata)
 
 }
-

@@ -53,4 +53,3 @@ out <- .C("predictrand",
 cat("Completed!\n")
 
 }
-

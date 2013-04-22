@@ -1,4 +1,5 @@
-Bchroncheck <- function(Bchrondata) {
+Bchroncheck <-
+function(Bchrondata) {
 
 cat("Checking files for possible errors... \n\n")
 

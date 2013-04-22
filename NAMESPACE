@@ -1,3 +1,5 @@
-export("Bchroncalibrate","Bchroncheck","Bchronconvergecheck","Bchroncreatecalcurve","Bchronload","BchronMCMC","Bchronmenu","Bchronplot","Bchronplotevent","Bchronpredict","Bchronpredictevent","Bchronproxyplot")
+export("Bchroncalibrate","Bchroncheck","Bchronconvergecheck","Bchroncreatecalcurve","Bchronload","BchronMCMC","Bchronmenu","Bchronplot","Bchronplotevent","Bchronpredict","Bchronpredictevent","Bchronproxyplot","BchronRSL","BchronRSLplot","Quickcal")
 
+S3method(print, Bchron)
+S3method(summary, Bchron)
 useDynLib(Bchron)

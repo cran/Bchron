@@ -81,12 +81,23 @@ Rprintf("Total number of iterations required: %i \n",m);
 Rprintf("Burn-in size: %i \n",burnin);
 Rprintf("Thinning by: %i \n",thinby);
 
+double progress;
+
 // Start iterations here 
 for (iter=0;iter<m;iter++)
 {
 
     // print out some of the values of iter
-    if(iter % howmany == 0 && iter>1)	Rprintf("%i \n",iter);
+    //if(iter % howmany == 0 && iter>1)	Rprintf("%i \n",iter);
+    if(iter % howmany == 0) {
+	    progress = (double) 100*iter/ m;
+        Rprintf("\r");
+        Rprintf("Completed: %4.2f %%",progress);
+        //Rprintf("Completed: %i ",iter);
+	    Rprintf("\r");
+	    R_FlushConsole();
+	}
+
     
     // Give some update and some estimated time to finish
     if(iter == 10000) 
@@ -147,7 +158,7 @@ for (iter=0;iter<m;iter++)
             Rprintf("thetaall[q]=%lf, thetanew[q]=%lf,BigC14[thetaall[q]]=%lf,BigC14[thetanew[q]]=%lf \n",thetaall[q],thetanew[q],BigC14[(int)(thetaall[q]*1000+0.5)-IntLowCal],BigC14[(int)(thetanew[q]*1000+0.5)-IntLowCal]);
             Rprintf("pixtheta[q]=%lf, piytheta[q]=%lf \n",pixtheta[q],piytheta[q]);
         }*/
-       
+        //Rprintf("thetanew=%lf \n",thetanew);
 
 		//Update the thetas
         U = runif(0.0,1.0);
@@ -163,6 +174,13 @@ for (iter=0;iter<m;iter++)
 } 
   
 fclose(parameterfile);
+
+Rprintf("\r");
+R_FlushConsole();
+Rprintf("Completed: 100.00 %%");
+Rprintf("\n");
+R_FlushConsole();
+
 
 c1 = clock();
 Rprintf("Completed!\n");

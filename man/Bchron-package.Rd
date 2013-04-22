@@ -6,19 +6,14 @@
 Compound Poisson-Gamma chronologies for radiocarbon and non-radiocarbon dates.
 }
 \description{
-Runs MCMC and predictive distributions for the monotonic piece-wise linear compound Poisson Gamma process.
-Before a run of the Bchron model can commence, the file structures must be in the correct format. Included in the package
-is an example set of data from Glendalough, Ireland. All other cores must be in a similar format for the routines
-to work. The latest version of Bchron also contains a function (\code{\link{Bchronproxyplot}}) for plotting proxy data with age uncertainty.
-
- ***IMPORTANT NOTE*** This version fixes a serious bug which was present in versions 3.1.1 and 3.1.2. You should have noticed this bug anyway when you ran the Bchronconvergecheck function.
-}
+Runs MCMC and predictive distributions for the monotonic piece-wise linear compound Poisson Gamma process. Before a run of the Bchron model can commence, the file structures must be in the correct format. Included in the package is an example set of data from Glendalough, Ireland. All other cores must be in a similar format for the routines to work. Version 3.1 of Bchron also contains a function (\code{\link{Bchronproxyplot}}) for plotting proxy data with age uncertainty. Version 3.2 includes new functions for estimating rates of relative sea level change, and a quick radiocarbon calibration function for individual dates.
+ }
 \details{
 \tabular{ll}{
 Package: \tab Bchron\cr
 Type: \tab Package\cr
-Version: \tab 3.0\cr
-Date: \tab 2009-11-27\cr
+Version: \tab 3.2\cr
+Date: \tab 2013-04-23\cr
 License: \tab GPL (>2) \cr
 LazyLoad: \tab yes\cr
 }
@@ -69,15 +64,17 @@ column indicates whether this date is a radiocarbon date (type 1), a uniformly d
 distributed date (type 3). For uniform dates, the standard deviation value is taken to be the distance to the upper and 
 lower limits. Type 3 dates are permitted to be outliers, with probabilities as given. Type 2 dates are not allowed to be
 outliers; the outlier probabilities for these dates are ignored.
+
+For more information see the webpage at \url{http://mathsci.ucd.ie/~parnell_a}
 }
 \references{
 Haslett and Parnell (2008, JRSSC, 57:399-418) and Parnell et al (2008, QSR, 27(19-20):1872-1885)
 }
 \author{
-Andrew Parnell <Andrew.Parnell@ucd.ie>
+Andrew Parnell \email{Andrew.Parnell@ucd.ie}
 }
 \seealso{
-See \code{\link{Bchronmenu}} for examples.
+See \code{\link{Bchronmenu}} and \url{http://mathsci.ucd.ie/~parnell_a} for examples.
 }
 \keyword{dplot}
 \keyword{programming}

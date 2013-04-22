@@ -1,6 +1,8 @@
 Bchronplot <-
-function(Bchrondata,plot=TRUE,dates=TRUE,datelabels=FALSE,chrons=TRUE,dateselect=NULL,limits=NULL,dateheight=mean(diff(Bchrondata$input[,4]))/200,chronwidth=0.95,datecolour="black",chroncolour="blue",outcolour="red",transp=0.5,outprob=0.1,legendloc="topleft",leghoriz=TRUE,...) {
-
+function(Bchrondata,plot=TRUE,dates=TRUE,datelabels=FALSE,chrons=TRUE,dateselect=NULL,limits=NULL,dateheight=mean(diff(Bchrondata$input[,4]))/200,chronwidth=0.95,datecolour="black",chroncolour="blue",outcolour="red",transp=0.5,outprob=0.4,legendloc="topleft",leghoriz=TRUE,...) {
+#  plot=TRUE;dates=TRUE;datelabels=FALSE;chrons=TRUE;dateselect=NULL;limits=NULL;dateheight=mean(diff(Bchrondata$input[,4]))/200;chronwidth=0.95;datecolour="black";chroncolour="blue";outcolour="red";transp=0.5;outprob=0.1;legendloc="topleft";leghoriz=TRUE
+  
+  
 if(dates==FALSE & chrons==FALSE) stop("One of dates of chrons must be set as true ")
 
 # Get the chronology output
@@ -62,7 +64,7 @@ XLIMIT = c(limits[2],limits[4])
 
 # Plot the Bchron output
 if(plot==TRUE) {
-    dev.new(...)
+    #dev.new(...)
     plot(1,1,xlim=XLIMIT,ylim=YLIMIT,xlab="k cal yrs BP",ylab="Depth (m)",type="n",main=paste(Bchrondata$fullname),bty="n",cex.axis=0.6,las=1,xaxt="n",yaxt="n")
     if(datelabels==TRUE) {
         bigstringw <- min(strwidth((Bchrondata$input[,1])))
@@ -104,7 +106,7 @@ if(dates==TRUE)
 {
     cat("Adding calibrated dates...\n")
     for(k in dateselect) {
-        cat(k,"\n")
+        #cat(k,"\n")
         
         datedens <- density(Bchrondata$calibdates[,k])
         if(max(datedens$x)-min(datedens$x)>0.01) polygon(datedens$x,depth[k]-datedens$y*dateheight/max(datedens$y),col=ifelse(maxoutprobs[k]>outprob,outcolour,datecolour),border=ifelse(maxoutprobs[k]>outprob,outcolour,datecolour))
@@ -133,7 +135,7 @@ if(chrons==TRUE) {
     mycol <- rgb(tmp[1,1]/255,tmp[2,1]/255,tmp[3,1]/255)
     mycol2 <- paste(mycol,as.character(as.hexmode(round(transp*255,0))),sep="")
     for(j in 1:length(Bchrondata$outdepths)) {
-        cat(j,"\n")
+        #cat(j,"\n")
         if(var(Bchrondata$chrons[,j])>0) {
             currenthdr <- hdr(Bchrondata$chrons[,j],h=bw.nrd0(Bchrondata$chrons[,j]),prob=chronwidth*100)$hdr
         } else {
@@ -145,14 +147,18 @@ if(chrons==TRUE) {
     
     polygon(c(HPD[,1],rev(HPD[,2])),c(Bchrondata$outdepths/100,rev(Bchrondata$outdepths/100)),col=mycol2,border=mycol2)
 
+    # Add in mean line
+    chronmeans = apply(Bchrondata$chrons,2,'mean')
+    lines(chronmeans,Bchrondata$outdepths/100,lwd=3)
+    
     baddates <- sum(maxoutprobs>outprob)
 
 # Add a legend
 if(!is.null(legendloc)) {
     if(baddates==0) {
-        legend(legendloc,c("Calibrated dates",paste(round(chronwidth*100,1),"% chronology",sep="")),pch=15,col=c(datecolour,mycol2),cex=0.8,bty="n",horiz=leghoriz)
+        legend(legendloc,c("Calibrated dates",paste(round(chronwidth*100,1),"% chronology",sep=""),'Mean'),pch=c(15,15,-1),col=c(datecolour,mycol2,'black'),cex=0.8,bty="n",horiz=leghoriz,lty=c(-1,-1,1),lwd=c(-1,-1,3))
     } else {
-        legend(legendloc,c("Calibrated dates","Outlying dates",paste(round(chronwidth*100,1),"% chronology",sep="")),cex=0.8,pch=15,col=c(datecolour,outcolour,mycol2),bty="n",horiz=leghoriz)
+        legend(legendloc,c("Calibrated dates","Outlying dates",paste(round(chronwidth*100,1),"% chronology",sep=""),'Mean'),cex=0.8,pch=15,col=c(datecolour,outcolour,mycol2,'black'),bty="n",horiz=leghoriz)
     }
 }
 
@@ -160,4 +166,3 @@ if(!is.null(legendloc)) {
 
 cat("Completed!\n")
 }
-

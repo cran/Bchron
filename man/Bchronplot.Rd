@@ -7,7 +7,7 @@ Produce Bchron chronology plots
 Produces plots of chronologies and radiocarbon dates
 }
 \usage{
-Bchronplot(Bchrondata, plot = TRUE, dates = TRUE, datelabels = FALSE, chrons = TRUE, dateselect = NULL, limits = NULL, dateheight = mean(diff(Bchrondata$input[, 4]))/200, chronwidth = 0.95, datecolour = "black", chroncolour = "blue", outcolour = "red", transp = 0.5, outprob = 0.1, legendloc = "topleft", leghoriz = TRUE, ...)
+Bchronplot(Bchrondata, plot = TRUE, dates = TRUE, datelabels = FALSE, chrons = TRUE, dateselect = NULL, limits = NULL, dateheight = mean(diff(Bchrondata$input[, 4]))/200, chronwidth = 0.95, datecolour = "black", chroncolour = "blue", outcolour = "red", transp = 0.5, outprob = 0.4, legendloc = "topleft", leghoriz = TRUE, ...)
 }
 \arguments{
   \item{Bchrondata}{
@@ -51,7 +51,7 @@ The colour of outlying dates.
 The degree of transparency of the chronology. 
 }
   \item{outprob}{
-The threshold over which dates are considered outliers and coloured accordingly. Default is 0.2.
+The threshold over which dates are considered outliers and coloured accordingly. Default is 0.4.
 }
   \item{legendloc}{
 The location of the legend. Can be given as any of "topleft", "top", etc, or locator(1) to position the legend manually.

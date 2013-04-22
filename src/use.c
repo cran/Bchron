@@ -246,13 +246,13 @@ double dtweedielogwsmallp(double y, double phi, double power)
 	int hij,lowj;
 
     if (power < 1) 
-        error("-99\n");
+        error("Error in Tweedie density!");
 	if (power > 2) 
-        error("-99\n");
+        error("Error in Tweedie density!");
     if (phi <= 0)
-        error("-99\n");
+        error("Error in Tweedie density!");
     if (y <= 0)
-        error("-99\n");
+        error("Error in Tweedie density!");
     p = power;
     a = (2 - p)/(1 - p);
     a1 = 1 - a;

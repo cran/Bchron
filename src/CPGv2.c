@@ -73,7 +73,7 @@ Rprintf("========================= \n");
        outprob1[i] = theoutprob1[i];
        outprob2[i] = theoutprob2[i];
        type[i] = thetypes[i];
-	   Rprintf("%3.3lf %3.3lf %3.3lf %3.3lf %3.3lf %3.3lf %i \n",cage[i],sd[i],depth[i],thick[i],outprob1[i],outprob2[i],type[i]);
+       Rprintf("%3.3lf %3.3lf %3.3lf %3.3lf %3.3lf %3.3lf %i \n",cage[i],sd[i],depth[i],thick[i],outprob1[i],outprob2[i],type[i]);
     }
     Rprintf("End of data. \n");
     Rprintf("========================= \n");
@@ -139,6 +139,8 @@ Rprintf("Burn in: %i \n",*burnin);
 clock_t c0, c1, c2;
 c0 = clock();
 
+double progress;
+
 // Let's do some printing to test things that might have gone wrong before the start of iterations
 //for(k=0;k<*ndets;k++) Rprintf("k=%i, thetaall = %lf \n",k,thetaall[k]);
 //for(k=0;k<*ndets-1;k++) Rprintf("k=%i, thetadiff = %lf \n",k,thetadiff[k]);
@@ -155,7 +157,7 @@ for (iter=0;iter<*m;iter++)
 	
 
     // Get a new seed
-    GetRNGstate();
+    //GetRNGstate();
 
     // Give some updates and some estimated time to finish
     if(iter == *howmany-1) 
@@ -166,7 +168,16 @@ for (iter=0;iter<*m;iter++)
     }
 
     // print out some of the values of iter
-    if((iter % *howmany == 0) & (iter>=*howmany)) Rprintf("%i \n",iter);
+    //if((iter % *howmany == 0) & (iter>=*howmany)) Rprintf("%i \n",iter);
+    if(iter% *howmany == 0) {
+	    progress = (double) 100*iter/ *m;
+        Rprintf("\r");
+        Rprintf("Completed: %4.2f %%",progress);
+        //Rprintf("Completed: %i ",iter);
+	    Rprintf("\r");
+	    R_FlushConsole();
+	}
+
 
     // Write everything to files
 	for(k=0; k<*ndets; k++)	
@@ -244,7 +255,14 @@ for (iter=0;iter<*m;iter++)
 	       		thetanew[q] = truncatedwalk(thetaall[q],0.1*((double)badcount+1),thetaall[q-1],thetaall[q+1]);		
 		      	thetanewrat = truncatedrat(thetaall[q],0.1*((double)badcount+1),thetaall[q-1],thetaall[q+1],thetanew[q]);
 		    }
-            
+		    //if(q==1) {
+		    //   Rprintf("============================\n");
+    		//    Rprintf("thetanew[1]=%lf \n",thetanew[1]);
+	    	//    Rprintf("thetaall[0]=%lf, thetaall[1]=%lf, thetaall[2]=%lf \n",thetaall[0],thetaall[1],thetaall[2]);
+	    	//    Rprintf("0.1*((double)badcount+1)=%lf \n",0.1*((double)badcount+1));
+            //    Rprintf("truncatedwalk(thetaall[1],0.1,thetall[0],thetaall[2])=%lf \n",truncatedwalk(thetaall[1],0.1,thetaall[0],thetaall[2]));
+            //}
+                    
             // Difference the new thetas
             diff(thetanew,ndets,thetanewdiff);  
             badtheta = Min(thetadiff,*ndets-1); 
@@ -458,7 +476,7 @@ for (iter=0;iter<*m;iter++)
 		}
         
 	}
-
+	
     ///////////////////////////////// Tweedie ////////////////////////////////////////
 
     // Update tweedie parameters
@@ -467,17 +485,21 @@ for (iter=0;iter<*m;iter++)
 	meannewrat = truncatedrat(mean,0.5,0.0,hi,meannew);
 	piytwmean = 0.0;
 	
+	//Rprintf("mean=%lf, meannew=%lf \n",mean,meannew);
+	
 	if(iter==0) {
        pixtwmean=0.0;
 	   for(i=0;i<*ndets-1;i++) 
           pixtwmean += log(dtweediep1(thetadiff[i],p,mean*depthdiff[i],psi/pow(depthdiff[i],p-1)));   
        pixtwmean += dgamma(1/mean,0.01,1/0.01,1);
     }
+	//Rprintf("pixtwmean=%lf \n",pixtwmean);
 	
 	for(i=0;i<*ndets-1;i++) 
 		piytwmean += log(dtweediep1(thetadiff[i],p,meannew*depthdiff[i],psi/pow(depthdiff[i],p-1)));
 	piytwmean += dgamma(1/meannew,0.01,1/0.01,1);
-	
+	//Rprintf("piytwmean=%lf \n",piytwmean);
+		
 	mean = UpdateMCMC(piytwmean,pixtwmean,meannew,mean,meannewrat);
 	if(mean == meannew) pixtwmean = piytwmean;
 
@@ -504,11 +526,17 @@ for (iter=0;iter<*m;iter++)
     // Sort out the RNG state
     PutRNGstate();
 
-	//}
 // End of iterations loop
 }
 
 fclose(parameterfile);
+
+Rprintf("\r");
+R_FlushConsole();
+Rprintf("Completed: 100.00 %%");
+Rprintf("\n");
+R_FlushConsole();
+
 
 c1 = clock();
 Rprintf("Completed!\n");

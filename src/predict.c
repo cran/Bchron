@@ -90,6 +90,7 @@ FILE *pars,*chrons;
 // Cleverly, I'm going to read it in one line at a time so that I don't have to store too much
 pars = fopen(*PARFILE,"r");
 chrons = fopen(*OUTFILE,"w");
+double progress;
 
 if(pars==NULL) {
     error("Error: can't open file of parameters.\n");
@@ -138,7 +139,15 @@ if(pars==NULL) {
         OutlierSum2[k] +=flag2[k];
     }
 
-    if(i % howmany==0) Rprintf("%i \n", *numchrons-i);
+    //if(i % howmany==0) Rprintf("%i \n", *numchrons-i);
+    if(i % howmany == 0) {
+	    progress = (double) 100*i/ *numchrons;
+        Rprintf("\r");
+        Rprintf("Completed: %4.2f %%",progress);
+        //Rprintf("Completed: %i ",iter);
+	    Rprintf("\r");
+	    R_FlushConsole();
+	}
 
     // Get a new seed
     GetRNGstate();
@@ -403,6 +412,13 @@ if(pars==NULL) {
 
 // End of good pars loop
 }
+
+Rprintf("\r");
+R_FlushConsole();
+Rprintf("Completed: 100.00 %%");
+Rprintf("\n");
+R_FlushConsole();
+
 
 // End of function
 }

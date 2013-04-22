@@ -46,9 +46,5 @@ if (is.numeric(good)) {
     cat("Or try a longer run.\n")
 }
 cat("\n \n")
-cat("Press <Enter> to continue...")
-readline()
-invisible()
 
 }
-

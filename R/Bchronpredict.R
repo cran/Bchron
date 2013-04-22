@@ -56,8 +56,7 @@ Bchrondata$chrons <- as.matrix(read.table(paste(Bchrondata$chronsfile)))
 cat("Depth","2.5%","50%","97.5%","\n",file=paste(Bchrondata$rangesfile),append=FALSE)
 for(j in 1:ncol(Bchrondata$chrons)) cat(Bchrondata$outdepths[j],quantile(Bchrondata$chrons[,j],c(0.025,0.5,0.975)),"\n",file=paste(Bchrondata$rangesfile),append=TRUE)
 
-cat("Completed!\n")
+#cat("Completed!\n")
 cat("\n")
 
 }
-
