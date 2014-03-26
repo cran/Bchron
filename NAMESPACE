@@ -1,5 +1,18 @@
-export("Bchroncalibrate","Bchroncheck","Bchronconvergecheck","Bchroncreatecalcurve","Bchronload","BchronMCMC","Bchronmenu","Bchronplot","Bchronplotevent","Bchronpredict","Bchronpredictevent","Bchronproxyplot","BchronRSL","BchronRSLplot","Quickcal")
+exportPattern("^[[:alpha:]]+")
 
-S3method(print, Bchron)
-S3method(summary, Bchron)
-useDynLib(Bchron)
+import(inline,MASS)
+importFrom(mclust,densityMclust)
+importFrom(hdrcde,hdr)
+importFrom(utils,txtProgressBar,setTxtProgressBar)
+importFrom(ellipse,ellipse)
+importFrom(coda,geweke.diag)
+
+S3method(plot, BchronologyRun)
+S3method(plot, BchronCalibratedDates)
+S3method(plot, BchronRSLRun)
+S3method(plot, BchronDensityRun)
+S3method(plot, BchronDensityRunFast)
+S3method(summary, BchronologyRun)
+S3method(summary, BchronRSLRun)
+S3method(summary, BchronCalibratedDates)
+

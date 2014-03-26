@@ -1,55 +1,85 @@
-\name{Bchroncalibrate}
-\alias{Bchroncalibrate}
+\name{BchronCalibrate}
+\alias{BchronCalibrate}
 \title{
-Radiocarbon calibration of Bchron data
+Fast radiocarbon calibration
 }
 \description{
-Runs standard radiocarbon calibration of determinations.
+A fast function for calibrating large numbers of radiocarbon dates involving multiple calibration curves
 }
 \usage{
-Bchroncalibrate(Bchrondata, iterations = 5e+05, burnin = 50000, thinby = 45, howmany = 50000, defaults = FALSE)
+BchronCalibrate(ages, ageSds, calCurves, ids = NULL, positions = NULL, 
+pathToCalCurves = system.file('data',package = "Bchron"), 
+eps = 1e-05, dfs = rep(100, length(ages)))
 }
 \arguments{
-  \item{Bchrondata}{
-A Bchron data object with fields for the the input and output files, the name of the core being used, the details of the calibration curve, and details of the model run required. 
-See \code{\link{Bchronload}} and \code{\link{Bchronmenu}} for more details. 
+  \item{ages}{
+A vector of ages (most likely 14C)
 }
-  \item{iterations}{
-    Number of MCMC iterations required. Default is 500,000.
+  \item{ageSds}{
+A vector of 1-sigma values for the ages given above
 }
-  \item{burnin}{
-    Number of discarded burn-in iterations. Default is 50,000.
+  \item{calCurves}{
+A vector of values containing either 'intcal13', 'shcal13', 'marine13', or 'normal'. Should be the same length the number of ages supplied. Non-standard calibration curves can be used provided they are supplied in the same format as those previously mentioned and are placed in the same directory. Normal indicates a normally-distributed (non-14C) age.
 }
-  \item{thinby}{
-    Step size of iterations to thin out. Default is to take every 45th iteration.
+  \item{ids}{
+(optional) ID names for each age
 }
-  \item{howmany}{
-    Number of iterations before R reports back and updates the screen. Default is 50000
+  \item{positions}{
+(optional) Position values (e.g. depths) for each age
 }
-  \item{defaults}{
-    If true, runs Bchroncalibrate without any warnings and overwrites previous runs. If FALSE (default) will prompt user before continuing.
+  \item{pathToCalCurves}{
+(optional) File path to where the calibration curves are located. Defaults to the system directory where the 3 standard calibration curves are stored. 
+}
+  \item{eps}{
+(optional) Cut-off point for density calculation. A value of eps>0 removes ages from the output which have negligible probability density
+}
+  \item{dfs}{
+(optional) Degrees-of-freedom values for the t-distribution associated with the calibration calculation. A large value indicates Gaussian distributions assumed for the 14C ages
 }
 }
 \details{
-This function run simple radiocarbon calibration of each of the determinations individually without any chronology constraint. The results here should be directly comparable with those 
-obtained from, eg Oxcal, Bcal, Calib, etc.
+This function provides a direct numerical integration strategy for computing calibrated radiocarbon ages. The steps for each 14C age are approximately as follows:
+1) Create a grid of ages covering the range of the calibration curve
+2) Calculate the probability of each age according to the 14C age, the standard deviation supplied and the calibration curve
+3) Normalise the probabilities so that they sum to 1
+4) Remove any probabilities that are less than the value given for eps
+Multiple calibration curves can be specified so that each 14C age can have a different curve. For ages that are not 14C, use the 'normal' calibration curve which treats the ages as normally distributed with given standard deviation
 }
 \value{
-No specific value is returned but two files are created in the output directory, giving the raw radiocarbon calibrated age iterations (corenameTrueDates.txt) and a summary of the 
-2.5%, 50%, and 97.5% probability ranges for each date (corenameCalibRanges.txt).
+A list of lists where each element corresponds to a single age. Each element contains:
+\item{ages}{The original age supplied}
+\item{ageSDs}{The original age standard deviation supplied}
+\item{positions}{The position of the age (usually the depth)}
+\item{calCurves}{The calibration curve used for that age}
+\item{ageGrid}{A grid of age values over which the density was created}
+\item{densities}{A vector of probability values indicating the probability value for each element in ageGrid}
+\item{ageLab}{The label given to the age variable}
+\item{positionLab}{The label given to the position variable}
 }
 \references{
-Haslett and Parnell (2008, JRSSC, 57:399-418) and Parnell et al (2008, QSR, 27(19-20):1872-1885)
+Forthcoming!
 }
 \author{
-Andrew Parnell <Andrew.Parnell@ucd.ie>
+Andrew Parnell <andrew.parnell@ucd.ie>
 }
 \seealso{
-See \code{\link{Bchronload}} and \code{\link{Bchronmenu}} for examples.
+\code{\link{Bchronology}}, \code{\link{BchronRSL}}, \code{\link{BchronDensity}}, \code{\link{BchronDensityFast}} 
 }
-\keyword{dplot}
-\keyword{programming}
-\keyword{models}
-\keyword{nonparametric}
-\keyword{smooth}
-\keyword{package}
+\examples{
+# Calibrate a single age
+ages1 = BchronCalibrate(ages=11553,ageSds=230,calCurves='intcal13',ids='Date-1')
+summary(ages1)
+plot(ages1)
+
+# Calibrate multiple ages with different calibration curves
+ages2 = BchronCalibrate(ages=c(3445,11553,7456),ageSds=c(50,230,110),
+calCurves=c('intcal13','intcal13','shcal13'))
+summary(ages2)
+plot(ages2)
+
+# Calibrate multiple ages with multiple calibration curves and including depth
+ages3 = BchronCalibrate(ages=c(3445,11553),ageSds=c(50,230),positions=c(100,150),
+calCurves=c('intcal13','normal'))
+summary(ages3)
+plot(ages3,withDepths=TRUE)
+}

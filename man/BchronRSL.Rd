@@ -1,72 +1,76 @@
 \name{BchronRSL}
 \alias{BchronRSL}
 \title{
-Function to estimate rates of relative sea level change
+Relative sea level rate (RSL) estimation
 }
 \description{
-This function takes output from a Bchron model run and fit an errors-in-variables regression of the defined order. The results can be used to estimate rates of change.
+This function takes output from a \code{\link{Bchronology}} run, some RSL mean and standard deviations, and fits an errors-in-variables polynomial regression model which takes account of the age uncertainty. It then esimates rates and accelerations in RSL with appropriate uncertainty quantification
 }
 \usage{
-BchronRSL(Bchrondata, RSLmean, RSLsd, degree = 1, iter = 10000, burnin = 2000, thin = 8, reportevery = 1000, BP = FALSE)
+BchronRSL(BchronologyRun, RSLmean, RSLsd, degree = 1, iterations = 10000, 
+burn = 2000, thin = 8)
 }
 \arguments{
-  \item{Bchrondata}{
-The output from a Bchron model run. See \code{\link{BchronMCMC}}
+  \item{BchronologyRun}{
+Output from a run of \code{\link{Bchronology}}
 }
   \item{RSLmean}{
-A vector containing the mean RSL estimates. The vector should be of the same length as the number of 'output depths' of the Bchron run.
+A vector of RSL mean estimates of the same length as the number of predictPositions given to the \code{\link{Bchronology}} function
 }
   \item{RSLsd}{
-A vector containing the standard deviation RSL estimates. The vector should be of the same length as the number of 'output depths' of the Bchron run.
-
+A vector RSL standard deviations of the same length as the number of predictPositions given to the \code{\link{Bchronology}} function
 }
   \item{degree}{
-The polynomial degree for the linear regression. 1 = linear, 2 = quadratic, 3 = cubic, etc
+(optional) The degree of the polynomial regression: linear=1 (default), quadratic=2, etc. Supports up to degree 5, though this will depend on the data given
 }
-  \item{iter}{
-The number of MCMC iterations to compute
+  \item{iterations}{
+(optional) The number of MCMC iterations to run
 }
-  \item{burnin}{
-The number of initial MCMC iterations to disgard
+  \item{burn}{
+(optional) The number of starting iterations to discard
 }
   \item{thin}{
-Keep every (thin) MCMC iterations
-}
-  \item{reportevery}{
-How often to report the results to the screen
-}
-  \item{BP}{
-Whether to report the results in years BP (default) or years BC/AD
+(optional) The step size of iterations to discard
 }
 }
 \details{
-This function runs a non-Gaussian errors-in-variables regression on the relative sea level data taking into account the uncertainty in the chronology. The output includes error intervals for the rates, as well as the full posterior distribution in case further analysis is required.
+This function fits an errors-in-variables regression model to relative sea level (RSL) data. An errors-in-variables regression model allows for uncertainty in the explanatory variable, here the age of sea level data point. The algorithm is more fully defined in the reference below
 }
 \value{
-A list with the following elements
-  \item{samples }{The posterior samples of the regression coefficients}
-  \item{degree }{The degree of the regression (see above)}
-  \item{BP }{Whether run in years before present or BC/AD}
-  \item{RSLmean }{The relative sea level means}
-  \item{RSLsds }{The relative sea level standard deviations}
-  \item{chrons }{The posterior sample of chronologies from Bchron}
-  \item{const }{The mean of the posterior samples of the chronology}
+An object of class BchronRSLRun with elements
+\item{BchronologyRun}{The output from the run of \code{\link{Bchronology}}}
+\item{samples}{The posterior samples of the regression parameters}
+\item{degree}{The degree of the polynomial regression}
+\item{RSLmean}{The RSL mean values given to the function}
+\item{RSLsd}{The RSL standard deviations as given to the function}
+\item{const}{The mean of the predicted age values. Used to standardise the design matrix and avoid computational issues }
 }
 \references{
-Forthcoming
+Andrew C. Parnell and W. Roland Gehrels (2013) 'Using chronological models in late holocene sea level reconstructions from salt marsh sediments' In: I. Shennan, B.P. Horton, and A.J. Long (eds). Handbook of Sea Level Research. Chichester: Wiley
 }
 \author{
-Andrew Parnell \email{andrew.parnell@ucd.ie}
+Andrew Parnell <andrew.parnell@ucd.ie>
 }
 \seealso{
-\code{\link{BchronRSLplot}} to plot output, \code{\link{BchronMCMC}} to create Bchron chronologies.
+\code{\link{BchronCalibrate}}, \code{\link{Bchronology}}, \code{\link{BchronDensity}}, \code{\link{BchronDensityFast}} 
 }
 \examples{
-## See http://mathsci.ucd.ie/~parnell_a/
+\dontrun{# Load in data
+data(TestChronData)
+data(TestRSLData)
+
+# Run through Bchronology
+RSLrun = Bchronology(ages=TestChronData$ages,ageSds=TestChronData$ageSds,
+positions=TestChronData$position,positionThicknesses=TestChronData$thickness,
+ids=TestChronData$id,calCurves=TestChronData$calCurves,
+predictPositions=TestRSLData$Depth)
+
+# Now run through BchronRSL
+RSLrun2 = BchronRSL(RSLrun,RSLmean=TestRSLData$RSL,RSLsd=TestRSLData$Sigma,degree=3)
+
+# Summarise it
+summary(RSLrun2)
+
+# Plot it
+plot(RSLrun2)}
 }
-\keyword{dplot}
-\keyword{programming}
-\keyword{models}
-\keyword{nonparametric}
-\keyword{smooth}
-\keyword{package}

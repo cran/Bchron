@@ -1,28 +1,16 @@
 Package: Bchron
 Type: Package
-Title: Bayesian radiocarbon chronologies and relative sea level
-        analysis
-Version: 3.2
-Date: 2013-4-22
-Depends: hdrcde, coda, MASS, ellipse, svDialogs
+Title: Radiocarbon dating, age-depth modelling, relative sea level rate
+        estimation, and non-parametric phase modelling
+Version: 4.0
+Date: 2014-03-26
+Depends: inline
+Imports: hdrcde, utils, MASS, ellipse, coda, mclust
 Author: Andrew Parnell
 Maintainer: Andrew Parnell <Andrew.Parnell@ucd.ie>
-Description: This package takes radiocarbon (or similar) dating
-        information to produce chronology reconstructions for age-depth
-        data. The package allows for: radiocarbon and non-radiocarbon
-        depths, thickness errors, outlying dates, multiple calibration
-        curves, and event prediction. It also produces some pretty
-        pictures, and writes all output to files to allow for further
-        analysis (eg palaeoclimate reconstruction). There is a menu
-        system for users, as well as a command line interface for
-        advanced and/or batch processing. Version 3.1 contains an
-        update to produce better plots of proxy data via the function
-        Bchronproxyplot. Version 3.2 includes new functions for
-        estimating rates of relative sea level change, and a quick
-        radiocarbon calibration function for individual dates.
+Description: This package enables quick calibration of radiocarbon dates under various calibration curves (including user generated ones); Age-depth modelling as per the algorithm of Haslett and Parnell (2008); Relative sea level rate estimation incorporating time uncertainty in polynomial regression models; and non-parametric phase modelling via Gaussian mixtures as a means to determine the activity of a site (and as an alternative to the Oxcal function SUM).
 License: GPL (>= 2)
-LazyLoad: yes
-Packaged: 2013-04-23 04:26:32 UTC; andrewparnell
-NeedsCompilation: yes
+Packaged: 2014-04-01 11:11:35 UTC; aparnell
+NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2013-04-23 07:59:23
+Date/Publication: 2014-04-01 14:03:25
