@@ -1,4 +1,5 @@
-plot.BchronRSLRun = function(x, xlab='Age (cal BP)',ylab='Depth (m)', ...) {
+plot.BchronRSLRun <-
+function(x, xlab='Age (cal BP)',ylab='Depth (m)', ...) {
   
   age.low = apply(x$BchronologyRun$thetaPredict,2,'quantile',probs=0.025)
   age.med = apply(x$BchronologyRun$thetaPredict,2,'quantile',probs=0.5)
@@ -34,4 +35,3 @@ plot.BchronRSLRun = function(x, xlab='Age (cal BP)',ylab='Depth (m)', ...) {
   lines(xgrid*1000,pred.high,lwd=2,lty=2)
   
 }
-

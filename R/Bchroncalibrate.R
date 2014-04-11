@@ -1,4 +1,5 @@
-BchronCalibrate = function(ages,ageSds,calCurves,ids=NULL,positions=NULL,pathToCalCurves=system.file('data',package='Bchron'),eps=1e-5,dfs=rep(100,length(ages))) {
+BchronCalibrate <-
+function(ages,ageSds,calCurves,ids=NULL,positions=NULL,pathToCalCurves=system.file('data',package='Bchron'),eps=1e-5,dfs=rep(100,length(ages))) {
   
   # This function expects ages in years BP (either 14C or not depending on calCurve values)
   # and positions (usually depths) in cm

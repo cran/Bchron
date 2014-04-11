@@ -1,9 +1,5 @@
-# S3 class plot function for BchronCalibratedDates
-# Needs to work for single dates, multiple dates, and multiple dates with depths
-# For single dates, just a single density
-# For multiple dates it will plot on position scale by default, otherwise wil plot in individual plots
-# Object x contains the output of BchronCalibrate
-plot.BchronCalibratedDates = function(x,withPositions=FALSE,...) {
+plot.BchronCalibratedDates <-
+function(x,withPositions=FALSE,...) {
   
   # First plot for individual dates
   if(length(x)==1) {

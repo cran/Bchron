@@ -90,6 +90,7 @@ A list of class BchronologyRun which include elements:
 }
 \references{
 Haslett, J., and Parnell, A. C. (2008). A simple monotone process with application to radiocarbon-dated depth chronologies. Journal of the Royal Statistical Society, Series C, 57, 399-418.
+
 Parnell, A. C., Haslett, J., Allen, J. R. M., Buck, C. E., and Huntley, B. (2008). A flexible approach to assessing synchroneity of past events using Bayesian reconstructions of sedimentation history. Quaternary Science Reviews, 27(19-20), 1872-1885.
 }
 \author{
@@ -109,8 +110,13 @@ calCurves=Glendalough$calCurves,positions=Glendalough$position,
 positionThicknesses=Glendalough$thickness,ids=Glendalough$id,
 predictPositions=seq(0,1500,by=10))
 
-# Summarise it
-summary(GlenOut)
+# Summarise it a few different ways
+summary(GlenOut) # Default is for quantiles of ages at predictPosition values
+summary(GlenOut, type='convergence') # Check model convergence
+summary(GlenOut, type='outliers') # Look at outlier probabilities
+
+# Predict for some new positions
+predictAges = predict(GlenOut, newPositions = c(150,725,1500), newPositionThicknesses=c(5,0,20))
 
 # Plot the output
 plot(GlenOut,main="Glendalough",xlab='Age (cal years BP)',ylab='Depth (cm)',las=1)}

@@ -1,4 +1,5 @@
-BchronDensity = function(ages,ageSds,calCurves,pathToCalCurves=system.file('data',package='Bchron'),dfs=rep(100,length(ages)),numMix=30,iterations=10000,burn=2000,thin=8,updateAges=FALSE) {
+BchronDensity <-
+function(ages,ageSds,calCurves,pathToCalCurves=system.file('data',package='Bchron'),dfs=rep(100,length(ages)),numMix=30,iterations=10000,burn=2000,thin=8,updateAges=FALSE) {
 
 if(length(ages)!=length(ageSds)) stop("ages and 1-sigma errors must be same length")
 if(length(ages)!=length(calCurves)) stop("ages and Calibration curves must be same length")

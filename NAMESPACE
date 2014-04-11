@@ -1,5 +1,7 @@
 exportPattern("^[[:alpha:]]+")
 
+useDynLib(Bchron)
+
 import(inline,MASS)
 importFrom(mclust,densityMclust)
 importFrom(hdrcde,hdr)
@@ -15,4 +17,4 @@ S3method(plot, BchronDensityRunFast)
 S3method(summary, BchronologyRun)
 S3method(summary, BchronRSLRun)
 S3method(summary, BchronCalibratedDates)
-
+S3method(predict, BchronologyRun)

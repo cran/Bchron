@@ -1,4 +1,5 @@
-plot.BchronDensityRunFast = function(x,plotDates=TRUE,plotSum=FALSE,...) {
+plot.BchronDensityRunFast <-
+function(x,plotDates=TRUE,plotSum=FALSE,...) {
   
   # x is the object with everything in it
   # Create a grid over which to plot - the range of the dates plus 10% each side

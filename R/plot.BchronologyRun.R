@@ -1,5 +1,5 @@
-# plot method for class BchronologyRun
-plot.BchronologyRun = function(x,...) {
+plot.BchronologyRun <-
+function(x,...) {
   # x contains the output from a run of the Bchronology function
   
   # Get chronology ranges
@@ -40,6 +40,3 @@ plot.BchronologyRun = function(x,...) {
   legend('topleft',c('Dated positions','95% Chronology CI'),col=c('black',chronCol),pch=15)
   
 }
-
-  
-  
