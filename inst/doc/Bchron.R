@@ -28,6 +28,12 @@ summary(ages3)
 plot(ages3,withPositions=TRUE)
 
 ## ------------------------------------------------------------------------
+# First create age samples for each date
+age_samples = SampleAges(ages3)
+# Now summarise them with quantile - this gives a 95% credible interval
+apply(age_samples,2,quantile,prob=c(0.025,0.975))
+
+## ------------------------------------------------------------------------
 data(Glendalough)
 print(Glendalough)
 
@@ -97,4 +103,17 @@ plot(SlugDens,xlab='Age (cal years BP)')
 #  SlugDensFast = BchronDensityFast(ages=Sluggan$ages,
 #                                   ageSds=Sluggan$ageSds,
 #                                   calCurves=Sluggan$calCurves)
+
+## ------------------------------------------------------------------------
+# Load in the calibration curve with:
+intcal09 = read.table('http://www.radiocarbon.org/IntCal09%20files/intcal09.14c',sep=',')
+# Run CreateCalCurve
+CreateCalCurve(name='intcal09',cal_ages=intcal09[,1],uncal_ages=intcal09[,2],one_sigma=intcal09[,3])
+
+## ------------------------------------------------------------------------
+age_09 = BchronCalibrate(age=15500,ageSds=150,calCurves = 'intcal09',ids='My Date')
+age_13 = BchronCalibrate(age=15500,ageSds=150,calCurves = 'intcal13')
+plot(age_09)
+with(age_13$date1,lines(ageGrid,densities,col='red'))
+legend('topleft',legend=c('intcal09','intcal13'),col=c('black','red'),lty=1)
 
