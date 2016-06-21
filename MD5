@@ -1,4 +1,4 @@
-18ee111447a892487b0bebeb8dfc7194 *DESCRIPTION
+3da972ce6f466f4a442609036ad9864f *DESCRIPTION
 67f5b13a919816ccf8b56df939ae0dec *NAMESPACE
 9be6cacfe165f716c12ee8befde6883c *R/BchronCalibrate.R
 8a59540c17173a28d835f7fdc068ffe7 *R/BchronDensity.R
@@ -7,7 +7,7 @@ ab3cc51f60d340bb24f26754d82bbd52 *R/BchronRSL.R
 60a4fe2b1e83fd5cedfc15faf306bcb8 *R/Bchronology.R
 79191b560d34df688b39eaaf09fb55cb *R/CreateCalCurve.R
 e60b4c8fb4277e35fc3a24595d420dd7 *R/SampleAges.R
-98c8e552e034ff44920e8bd1dbb62fb2 *R/plot.BchronCalibratedDates.R
+115cff04f4ea11f0d37de7e8669d1664 *R/plot.BchronCalibratedDates.R
 bbbdaff3bdf7b76e1e639aa2198f2c48 *R/plot.BchronDensityRun.R
 65315fe5e480778d771320a85247dfed *R/plot.BchronDensityRunFast.R
 4b2480246db508d3bcf040e05d7f478a *R/plot.BchronRSLRun.R
@@ -27,7 +27,7 @@ eb50040723c568d8545df12c355d6230 *build/vignette.rds
 2bfe498f775b8f50beb30247ef8a7dc5 *data/shcal13.txt.gz
 f506534bb873a6a49aede7ecd29b0040 *inst/doc/Bchron.R
 5f08821aba7e52e0f59dc3cabc4e63f0 *inst/doc/Bchron.Rmd
-8565f72d64a732d242292f7af290bf2e *inst/doc/Bchron.html
+7af3782df96ffac8fd846ce50870b84e *inst/doc/Bchron.html
 09efc0f9245c501897069a99c3f66997 *man/Bchron-package.Rd
 a60cd2f2fa98613e30f8e83100db606d *man/BchronCalibrate.Rd
 e12034c2685a79d48acd7fee3ec39cf7 *man/BchronDensity.Rd
@@ -43,7 +43,7 @@ d77d92b5b70bd85dcb2c63e7489b7d52 *man/TestRSLData.Rd
 03f3d8088fb51addbc049011cbdfed04 *man/intcal13.Rd
 d5afb6c14eaaa33a45de0e238204750b *man/marine13.Rd
 66f808c89cab4fbbeeb8694b64aa4cb5 *man/normal.Rd
-2fa4114b8a51cc988e69b6069792657c *man/plot.BchronCalibratedDates.Rd
+a988b8ca384eca5987420e80bd2a7d5c *man/plot.BchronCalibratedDates.Rd
 4031fa5485148e0a70dd43ab3f74526f *man/plot.BchronDensityRun.Rd
 9e4679a0a9d056adad23fea3f3f0d077 *man/plot.BchronDensityRunFast.Rd
 2ce4096f2b6d74f66cb8e0f0ac896271 *man/plot.BchronRSLRun.Rd
