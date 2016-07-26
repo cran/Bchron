@@ -1,3 +1,7 @@
+## ----global_options, include=FALSE---------------------------------------
+knitr::opts_chunk$set(fig.width=7, fig.height = 5, fig.align = 'center',
+                      warning=FALSE, message=FALSE)
+
 ## ----eval=FALSE----------------------------------------------------------
 #  install.packages('Bchron')
 
@@ -68,11 +72,27 @@ predictAges = predict(GlenOut,
                       newPositions = c(150,725,1500), 
                       newPositionThicknesses=c(5,0,20))
 
+## ---- results ='hide'----------------------------------------------------
+acc_rate = summary(GlenOut, type = 'acc_rate')
+
+## ---- eval=FALSE---------------------------------------------------------
+#  plot(acc_rate[,'age_grid'], acc_rate[,'50%'], type='l', ylab = 'cm per year', xlab = 'Age (k cal years BP)', ylim = range(acc_rate[,-1]))
+#  lines(acc_rate[,'age_grid'], acc_rate[,'2.5%'], lty='dotted')
+#  lines(acc_rate[,'age_grid'], acc_rate[,'97.5%'], lty='dotted')
+
+## ---- eval=FALSE---------------------------------------------------------
+#  sed_rate = summary(GlenOut, type = 'sed_rate', useExisting = FALSE)
+
+## ---- eval=FALSE---------------------------------------------------------
+#  plot(sed_rate[,'position_grid'], sed_rate[,'50%'], type='l', ylab = 'Years per cm', xlab = 'Depth (cm)', ylim = range(sed_rate[,-1]))
+#  lines(sed_rate[,'position_grid'], sed_rate[,'2.5%'], lty='dotted')
+#  lines(sed_rate[,'position_grid'], sed_rate[,'97.5%'], lty='dotted')
+
 ## ------------------------------------------------------------------------
 data(TestChronData)
 data(TestRSLData)
 
-## ----eval=FALSE----------------------------------------------------------
+## ----messages=FALSE, results='hide', eval=FALSE--------------------------
 #  RSLrun = Bchronology(ages=TestChronData$ages,
 #                       ageSds=TestChronData$ageSds,
 #                       positions=TestChronData$position,
@@ -85,19 +105,20 @@ data(TestRSLData)
 #                      RSLsd=TestRSLData$Sigma,
 #                      degree=3)
 
-## ----fig.align='center',fig.width=6,fig.height=5,eval=FALSE--------------
-#  summary(RSLrun2)
-#  plot(RSLrun2)
+## ---- eval=FALSE---------------------------------------------------------
+#  summary(RSLrun2, type = 'RSL', age_grid = seq(0, 2000, by  = 250))
+#  plot(RSLrun2, type = 'RSL', main = 'Relative sea level plot')
+#  plot(RSLrun2, type = 'rate', main = 'Rate of RSL change')
 
-## ----results='hide'------------------------------------------------------
-data(Sluggan)
-SlugDens = BchronDensity(ages=Sluggan$ages,
-                         ageSds=Sluggan$ageSds,
-                         calCurves=Sluggan$calCurves,
-                         numMix=50)
+## ----results='hide', eval=FALSE------------------------------------------
+#  data(Sluggan)
+#  SlugDens = BchronDensity(ages=Sluggan$ages,
+#                           ageSds=Sluggan$ageSds,
+#                           calCurves=Sluggan$calCurves,
+#                           numMix=50)
 
-## ----fig.align='center',fig.width=6,fig.height=5-------------------------
-plot(SlugDens,xlab='Age (cal years BP)')
+## ---- eval=FALSE---------------------------------------------------------
+#  plot(SlugDens,xlab='Age (cal years BP)')
 
 ## ----eval=FALSE----------------------------------------------------------
 #  SlugDensFast = BchronDensityFast(ages=Sluggan$ages,
@@ -114,6 +135,6 @@ CreateCalCurve(name='intcal09',cal_ages=intcal09[,1],uncal_ages=intcal09[,2],one
 age_09 = BchronCalibrate(age=15500,ageSds=150,calCurves = 'intcal09',ids='My Date')
 age_13 = BchronCalibrate(age=15500,ageSds=150,calCurves = 'intcal13')
 plot(age_09)
-with(age_13$date1,lines(ageGrid,densities,col='red'))
+lines(age_13$Date1$ageGrid,age_13$Date1$densities,col='red')
 legend('topleft',legend=c('intcal09','intcal13'),col=c('black','red'),lty=1)
 
