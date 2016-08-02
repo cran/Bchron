@@ -33,7 +33,7 @@ x.df1 = BchronCalibrate(ages=ages,ageSds=ageSds,calCurves=calCurves,positions=po
 x.df2 = BchronCalibrate(ages=ages,ageSds=ageSds,calCurves=calCurves,positions=positions,ids=ids,pathToCalCurves=pathToCalCurves,eps=0,dfs=rep(dfs[2],length(ages)))
 
 # Get current positions and their order
-currPositions = sort(jitter(positions/positionScaleVal))
+currPositions = sort(jitter(positions/positionScaleVal, amount = 1/positionScaleVal))
 diffPosition = diff(currPositions)
 do = order(currPositions)
 
@@ -71,6 +71,7 @@ thetaPredict = matrix(ncol=length(predictPositions),nrow=remaining)
 
 # C function for truncated random walk
 truncatedWalk = function(old,sd,low,high) {
+  if(isTRUE(all.equal(low, high, tolerance = 1e-4))) return(list(new=low,rat=1))
   new = .C('truncatedWalk',as.double(old),as.double(sd),as.double(low),as.double(high),as.double(0))[5][[1]]
   rat =.C('truncatedRat',as.double(old),as.double(sd),as.double(low),as.double(high),as.double(new),as.double(0))[6][[1]]
   if(is.nan(rat)) rat=1 # Useful for when proposed value and new value are identical
@@ -125,7 +126,9 @@ for(i in 1:iterations) {
     for(j in 1:(n-1)) {
       # Find which positions we need to interpolate for
       depthIndRange = which(predictPositionsRescaled>=currPositions[do[j]] & predictPositionsRescaled<=currPositions[do[j+1]])
-      thetaPredict[ind,depthIndRange] = round(predictInterp(alpha,lambda,beta,predictPositionsRescaled[depthIndRange],diffPosition[j],currPositions[do[j]],currPositions[do[j+1]],theta[do[j]],theta[do[j+1]]),3)
+      if(length(depthIndRange)>0) {
+        thetaPredict[ind,depthIndRange] = round(predictInterp(alpha,lambda,beta,predictPositionsRescaled[depthIndRange],diffPosition[j],currPositions[do[j]],currPositions[do[j+1]],theta[do[j]],theta[do[j+1]]),3)
+      }
     }
 
     # Extrapolate up to to top depth
@@ -190,14 +193,14 @@ for(i in 1:iterations) {
   }
 
   # Update mu
-  muNewAll = truncatedWalk(mu,muMhSd,0,1e5)
+  muNewAll = truncatedWalk(mu,muMhSd,1e-4,1e3)
   muNew = muNewAll$new
 
   logRmu = sum(log(dtweediep1(diff(theta[do]),p,muNew*diffPosition,psi/(diffPosition)^(p-1)))) - sum(log(dtweediep1(diff(theta[do]),p,mu*diffPosition,psi/(diffPosition)^(p-1)))) + log(muNewAll$rat)
   if(stats::runif(1)<exp(logRmu)) mu = muNew
 
   # Update psi
-  psiNewAll = truncatedWalk(psi,psiMhSd,0,1e5)
+  psiNewAll = truncatedWalk(psi,psiMhSd,1e-4,1e3)
   psiNew = psiNewAll$new
 
   logRpsi = sum(log(dtweediep1(diff(theta[do]),p,mu*diffPosition,psiNew/(diffPosition)^(p-1)))) - sum(log(dtweediep1(diff(theta[do]),p,mu*diffPosition,psi/(diffPosition)^(p-1)))) + log(psiNewAll$rat)

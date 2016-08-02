@@ -114,11 +114,13 @@ data(TestRSLData)
 #  data(Sluggan)
 #  SlugDens = BchronDensity(ages=Sluggan$ages,
 #                           ageSds=Sluggan$ageSds,
-#                           calCurves=Sluggan$calCurves,
-#                           numMix=50)
+#                           calCurves=Sluggan$calCurves)
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  plot(SlugDens,xlab='Age (cal years BP)')
+#  summary(SlugDens, prob = 0.95)
+
+## ---- eval=FALSE---------------------------------------------------------
+#  plot(SlugDens,xlab='Age (cal years BP)', xaxp=c(0, 16000, 16))
 
 ## ----eval=FALSE----------------------------------------------------------
 #  SlugDensFast = BchronDensityFast(ages=Sluggan$ages,

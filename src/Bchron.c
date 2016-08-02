@@ -5,7 +5,7 @@
 
 void rtruncn(double *a, double *b, double *x) {
   double A, B;
-  double maxA, maxB, maxR, r2, r, th, u, v, accept=0.0;
+  double maxA, maxB, maxR, r2, r, th, u, accept=0.0;
   A = atan(*a);
   B = atan(*b);
   maxA = exp(-pow(*a,2)/4)/cos(A);
@@ -26,7 +26,7 @@ void truncatedWalk(double *old, double *sd, double *low, double *high, double *n
   double lowlimold, upplimold, y;
   lowlimold = (*low - *old)/ *sd;
   upplimold = (*high - *old)/ *sd;
-  rtruncn(&lowlimold, &upplimold,&y);
+  rtruncn(&lowlimold, &upplimold, &y);
   *newvalue = *old + *sd*y;
 }
 
@@ -44,7 +44,7 @@ void truncatedRat(double *old, double *sd, double *low, double *high, double *ne
 }
 
 void dtweedielogwsmallp(double *y, double *phi, double *power, double *logw) {
-  double p,a,a1,r,drop=37,logz,jmax,j,cc,wmax,estlogw,oldestlogw;
+  double p,a,a1,r,drop=37,logz,jmax,j,cc,wmax,estlogw;
   int hij,lowj;
 
   if (*power < 1) error("Error - power<1!");
@@ -75,7 +75,6 @@ void dtweedielogwsmallp(double *y, double *phi, double *power, double *logw) {
   estlogw = wmax;
   while ((estlogw > (wmax - drop)) && (j >= 2)) {
     j = fmax2(1, j - 2);
-    oldestlogw = estlogw;
     estlogw = j * (cc - a1 * log(j));
   }
   lowj = (int)fmax2(1, floor(j));
@@ -112,6 +111,7 @@ void dtweedieseriessmallp(double *power, double *y, double *mu, double *phi, dou
 void dtweediep1(double *y, double *power, double *mu, double *phi, double *fTplus) {
   // Calculates the density of a tweedie plus one random variable
   double eps = 0.00000001;
+  //double eps = 0.001;
   double lambda2 = pow(*mu,2-*power)/(*phi*(2-*power))-eps;
   double alpha = (2-*power)/(*power-1);
   double beta = 1/(*phi*(*power-1)*pow(*mu,*power-1));

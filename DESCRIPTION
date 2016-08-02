@@ -2,10 +2,10 @@ Package: Bchron
 Type: Package
 Title: Radiocarbon Dating, Age-Depth Modelling, Relative Sea Level Rate
         Estimation, and Non-Parametric Phase Modelling
-Version: 4.2.4
-Date: 2016-07-25
+Version: 4.2.5
+Date: 2016-08-02
 Depends: inline
-Imports: hdrcde, utils, MASS, ellipse, coda, mclust
+Imports: utils, MASS, ellipse, coda, mclust
 Encoding: UTF-8
 Author: Andrew Parnell
 Maintainer: Andrew Parnell <Andrew.Parnell@ucd.ie>
@@ -14,6 +14,6 @@ License: GPL (>= 2)
 Suggests: knitr
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2016-07-26 11:08:36 UTC; andrewparnell
+Packaged: 2016-08-02 14:58:03 UTC; andrewparnell
 Repository: CRAN
-Date/Publication: 2016-07-26 14:45:11
+Date/Publication: 2016-08-02 17:51:22
