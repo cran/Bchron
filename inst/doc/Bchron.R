@@ -35,7 +35,10 @@ plot(ages3,withPositions=TRUE)
 # First create age samples for each date
 age_samples = SampleAges(ages3)
 # Now summarise them with quantile - this gives a 95% credible interval
-apply(age_samples,2,quantile,prob=c(0.025,0.975))
+apply(age_samples, 2, quantile, prob=c(0.025,0.975))
+
+## ------------------------------------------------------------------------
+apply(age_samples, 2, quantile, prob=c(0.5))
 
 ## ------------------------------------------------------------------------
 data(Glendalough)
@@ -71,6 +74,8 @@ plot(GlenOut,
 predictAges = predict(GlenOut, 
                       newPositions = c(150,725,1500), 
                       newPositionThicknesses=c(5,0,20))
+predictAges = predict(GlenOut, 
+                      newPositions = seq(0,1500,by=10))
 
 ## ---- results ='hide'----------------------------------------------------
 acc_rate = summary(GlenOut, type = 'acc_rate')
@@ -93,17 +98,18 @@ data(TestChronData)
 data(TestRSLData)
 
 ## ----messages=FALSE, results='hide', eval=FALSE--------------------------
-#  RSLrun = Bchronology(ages=TestChronData$ages,
-#                       ageSds=TestChronData$ageSds,
-#                       positions=TestChronData$position,
-#                       positionThicknesses=TestChronData$thickness,
-#                       ids=TestChronData$id,
-#                       calCurves=TestChronData$calCurves,
-#                       predictPositions=TestRSLData$Depth)
+#  RSLrun = Bchronology(ages = TestChronData$ages,
+#                       ageSds = TestChronData$ageSds,
+#                       positions = TestChronData$position,
+#                       positionThicknesses = TestChronData$thickness,
+#                       ids = TestChronData$id,
+#                       calCurves = TestChronData$calCurves,
+#                       jitterPositions = TRUE,
+#                       predictPositions = TestRSLData$Depth)
 #  RSLrun2 = BchronRSL(RSLrun,
-#                      RSLmean=TestRSLData$RSL,
-#                      RSLsd=TestRSLData$Sigma,
-#                      degree=3)
+#                      RSLmean = TestRSLData$RSL,
+#                      RSLsd = TestRSLData$Sigma,
+#                      degree = 3)
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  summary(RSLrun2, type = 'RSL', age_grid = seq(0, 2000, by  = 250))

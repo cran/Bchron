@@ -24,7 +24,7 @@ If you find bugs or want to suggest new features please visit the Bchron [GitHub
 
 ## Installing Bchron
 
-Bchron will run in Windows, Mac OS X or Linux. To install Bchron you first need to install [R](http://www.r-project.org). I would also recommend installing [Rstudio](http://www.rstudio.com) as a nice desktop environment for using R. Once in R you can type:
+Bchron will run in Windows, Mac OS X or Linux. To install Bchron you first need to install [R](https://www.r-project.org). I would also recommend installing [Rstudio](http://www.rstudio.com) as a nice desktop environment for using R. Once in R you can type:
 
 ```{r,eval=FALSE}
 install.packages('Bchron')
@@ -82,10 +82,17 @@ If, alternatively, you want a _credible interval_ (i.e. a single contiguous rang
 # First create age samples for each date
 age_samples = SampleAges(ages3)
 # Now summarise them with quantile - this gives a 95% credible interval
-apply(age_samples,2,quantile,prob=c(0.025,0.975))
+apply(age_samples, 2, quantile, prob=c(0.025,0.975))
 ```
 
-The calibration code is very fast. On standard PC you should have no trouble calibrating thousands of dates simultaneously without a noticeably long wait.
+The `SampleAges` function introduces some uncertainty as it is a simple random sample. This means that repeatedly running it will give you slightly different results. If you are introduced in precision at a yearly level, you might want to increate the `n_samp` argument though will slow the function down a litt.e
+
+If you wanted to find each date's median age (though this is often an inappropriate summary and should be treated with caution), use:
+```{r}
+apply(age_samples, 2, quantile, prob=c(0.5))
+```
+
+The calibration code is very fast. On a standard PC you should have no trouble calibrating thousands of dates simultaneously without a noticeably long wait.
 
 ## Running the Bchronology age-depth model
 
@@ -139,6 +146,8 @@ Finally, the `predict` command will produce predicted ages for a newly specified
 predictAges = predict(GlenOut, 
                       newPositions = c(150,725,1500), 
                       newPositionThicknesses=c(5,0,20))
+predictAges = predict(GlenOut, 
+                      newPositions = seq(0,1500,by=10))
 ```
 
 To run this model on a data set of your own, you will need to load in your data set via, e.g.
@@ -193,17 +202,18 @@ data(TestRSLData)
 These can be run through Bchronology and BchronRSL via:
 
 ```{r,messages=FALSE, results='hide', eval=FALSE}
-RSLrun = Bchronology(ages=TestChronData$ages,
-                     ageSds=TestChronData$ageSds, 
-                     positions=TestChronData$position,
-                     positionThicknesses=TestChronData$thickness, 
-                     ids=TestChronData$id,
-                     calCurves=TestChronData$calCurves, 
-                     predictPositions=TestRSLData$Depth)
+RSLrun = Bchronology(ages = TestChronData$ages,
+                     ageSds = TestChronData$ageSds,
+                     positions = TestChronData$position,
+                     positionThicknesses = TestChronData$thickness,
+                     ids = TestChronData$id,
+                     calCurves = TestChronData$calCurves,
+                     jitterPositions = TRUE,
+                     predictPositions = TestRSLData$Depth)
 RSLrun2 = BchronRSL(RSLrun,
-                    RSLmean=TestRSLData$RSL,
-                    RSLsd=TestRSLData$Sigma,
-                    degree=3)
+                    RSLmean = TestRSLData$RSL,
+                    RSLsd = TestRSLData$Sigma,
+                    degree = 3)
 ```
 
 The `Bchronology` run is as described in the section above. The `BChronRSL` run takes this object, an estimate of the RSL means and standard deviations, and a value of degree (here 3 indicating cubic regression). They can then be summarised and plotted via:
@@ -241,7 +251,7 @@ You can plot the density with:
 plot(SlugDens,xlab='Age (cal years BP)', xaxp=c(0, 16000, 16))
 ```
 
-Phases will be shown with a thick black red line. These can be turned off by setting the argument `plotPhase=FALSE` whilst the sensitibity can be changed with `phaseProb`.
+Phases will be shown with a thick black red line. These can be turned off by setting the argument `plotPhase=FALSE` whilst the sensitivity can be changed with `phaseProb`.
 
 BchronDensityFast is identical except for the function call:
 
@@ -255,12 +265,13 @@ The `BchronDensityFast` function outputs the age grid and density by default so 
 ## Including user-defined calibration curves
 
 Bchron allows for user-defined calibration curves to be created through the function `CreateCalCurve`. If inputs to this function are:
+
   - The `name` of the calibration curve (e.g. intcal13c)
   - The calibrated/calendar ages for the new calibration curve
   - The uncalibrated (e.g. 14C) ages for the new calibration curve
   - (Optionally) the 1-sigma error for the calibration curve in uncalibrated years. If not included the error is assumed to be zero
 
-One run, the calibration curve can be used for all future runs until the package is deleted or re-installed. The calibration curve can be used by simple calling it in any other Bchron function using the supplied name. Note that no name checking is done, so it is possible to over-write the pre-defined calibration curves if
+Once run, the calibration curve can be used for all future runs until the package is deleted or re-installed. The calibration curve can be used by simply calling it in any other Bchron function using the supplied name. Note that no name checking is done, so it is possible to over-write the pre-defined calibration curves if
 
 As an example, consider installing the intcal09 calibration curve, as available from (http://www.radiocarbon.org/IntCal09%20files/intcal09.14c)[here]. We can run the following code:
 

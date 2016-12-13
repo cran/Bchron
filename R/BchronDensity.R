@@ -1,3 +1,48 @@
+#' Non-parametric phase model
+#'
+#' This function runs a non-parametric phase model on 14C and non-14C ages via Gaussian Mixture density estimation
+#'
+#' @param ages A vector of ages (most likely 14C)
+#' @param ageSds A vector of 1-sigma values for the ages given above
+#' @param calCurves A vector of values containing either 'intcal13', 'shcal13', 'marine13', or 'normal'. Should be the same length the number of ages supplied. Non-standard calibration curves can be used provided they are supplied in the same format as those previously mentioned and are placed in the same directory. Normal indicates a normally-distributed (non-14C) age.
+#' @param pathToCalCurves File path to where the calibration curves are located. Defaults to the system directory where the 3 standard calibration curves are stored
+#' @param dfs Degrees-of-freedom values for the t-distribution associated with the calibration calculation. A large value indicates Gaussian distributions assumed for the 14C ages
+#' @param numMix The number of mixture components in the phase model. Might need to be increased if the data set is large and the phase behaviour is very complex
+#' @param iterations The number of iterations to run for
+#' @param burn The number of starting iterations to discard
+#' @param thin The step size of iterations to keep
+#' @param updateAges Whether or not to update ages as part of the MCMC run. Default is FALSE. Changing this to TRUE will improve performance but will fit a slightly invalid model
+#' @param store_density Whether or not to store the density and age grid. Useful for plotting the output in other packages
+#'
+#' @details This model places a Gaussian mixture prior distribution on the calibrated ages and so estimates the density of the overall set of radiocarbon ages. It is designed to be a probabilistic version of the Oxcal SUM command which takes calibrated ages and sums the probability distributions with the aim of estimating activity through age as a proxy.
+#'
+#' @return An object of class BchronDensityRun with the following elements:
+#' \itemize{
+#' \item{theta}{The posterior samples of the restricted ages}
+#' \item{p}{Posterior samples of the mixture proportions}
+#' \item{mu}{Values of the means of each Gaussian mixture}
+#' \item{calAges}{The calibrated ages from \code{\link{BchronCalibrate}}}
+#' \item{G}{The number of mixture components. Equal to numMix}
+#' \item{age_grid}{A grid of ages used for the final density estimate}
+#' \item{density}{The density estimate based on the above age grid}
+#' }
+#' 
+#' @seealso \code{\link{Bchronology}}, \code{\link{BchronRSL}}, \code{\link{BchronDensityFast}} for a faster approximate version of this function
+#' 
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Read in some data from Sluggan Moss
+#' data(Sluggan)
+#' 
+#' # Run the model
+#' SlugDens = BchronDensity(ages=Sluggan$ages,ageSds=Sluggan$ageSds,
+#'                          calCurves=Sluggan$calCurves)
+#' 
+#' # plot it
+#' plot(SlugDens)
+#' }
 BchronDensity <-
 function(ages,ageSds,calCurves,pathToCalCurves=system.file('data',package='Bchron'),dfs=rep(100,length(ages)),numMix=50,iterations=10000,burn=2000,thin=8,updateAges=FALSE,store_density=TRUE) {
 
@@ -16,7 +61,7 @@ for(i in 2:n) thetaRange = range(c(thetaRange,xSmall[[i]]$ageGrid))
 # Put in offset for normal calibration curve (enables faster lookup)
 offset=vector(length=n)
 for(i in 1:n) {
-  offset[i] = ifelse(x[[i]]$calCurve == 'normal',61,0)
+  offset[i] = ifelse(x[[i]]$calCurve == 'normal',100,0)
 }
 
 # Create some Gaussian basis functions to use
@@ -57,7 +102,6 @@ for(j in 1:n) thetaAll[,j] = sample(xSmall[[j]]$ageGrid,size=iterations,prob=xSm
 # Create function for quick calling of mixture density
 mu2 = mu
 sigma2 = (mu[2] - mu[1]) / 2
-my_dnorm = function(x) stats::dnorm(x,mean=mu2,sd=sigma2)
 
 # Loop through iterations
 pb = utils::txtProgressBar(min = 1, max = iterations, style = 3,width=60,title='Running BchronDensity')
