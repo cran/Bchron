@@ -2,7 +2,7 @@
 title: "Using Bayesian radiocarbon chronology package Bchron"
 author: "Andrew Parnell"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: rmarkdown::html_vignette 
 vignette: >
   %\VignetteIndexEntry{Bchron}
   %\VignetteEngine{knitr::rmarkdown}
@@ -16,7 +16,7 @@ knitr::opts_chunk$set(fig.width=7, fig.height = 5, fig.align = 'center',
 
 ## Introduction
 
-Bchron is an R package that enables quick calibration of radiocarbon dates under various calibration curves (including user generated ones); age-depth modelling as per the algorithm of Haslett and Parnell (2008); Relative sea level rate estimation incorporating time uncertainty in polynomial regression models (Parnell and Gehrels 2015); and non-parametric phase modelling via Gaussian mixtures as a means to determine the activity of a site (and as an alternative to the Oxcal function SUM; currently unpublished).
+Bchron is an R package that enables quick calibration of radiocarbon dates under various calibration curves (including user generated ones); age-depth modelling as per the algorithm of Haslett and Parnell (2008); Relative sea level rate estimation incorporating time uncertainty in polynomial regression models (Parnell and Gehrels 2015); non-parametric phase modelling via Gaussian mixtures as a means to determine the activity of a site (and as an alternative to the Oxcal function SUM; currently unpublished), and reverse calibration of dates from calibrated into un-calibrated years. 
 
 You will find Bchron far easier to use if you know some basics on how to use R. I recommend the book by Norman Matloff [amazon.co.uk link](http://www.amazon.co.uk/The-Art-Programming-Statistical-Software/dp/1593273843), or the online intro course by [Code School](www.codeschool.com).
 
@@ -37,6 +37,8 @@ library(Bchron)
 ```
 
 it will load in all the Bchron functions.
+
+If you want to install the development version of Bchron please visit the Bchron [GitHub page](https://github.com/andrewcparnell/Bchron). The GitHub version contains a few more features but some of these can be quite untested, and occasionally this version will break when it is in the process of being updated. 
 
 ## Calibrating radiocarbon dates
 
@@ -76,16 +78,18 @@ summary(ages3)
 plot(ages3,withPositions=TRUE)
 ```
 
-If, alternatively, you want a _credible interval_ (i.e. a single contiguous range) rather than an HDR, you could use the `SampleAges` function:
+## Credible intervals
+
+If, alternatively, you want a _credible interval_ (i.e. a single contiguous range) rather than an HDR, you could use the `sampleAges` function:
 
 ```{r}
 # First create age samples for each date
-age_samples = SampleAges(ages3)
+age_samples = sampleAges(ages3)
 # Now summarise them with quantile - this gives a 95% credible interval
 apply(age_samples, 2, quantile, prob=c(0.025,0.975))
 ```
 
-The `SampleAges` function introduces some uncertainty as it is a simple random sample. This means that repeatedly running it will give you slightly different results. If you are introduced in precision at a yearly level, you might want to increate the `n_samp` argument though will slow the function down a litt.e
+The `sampleAges` function introduces some uncertainty as it is a simple random sample. This means that repeatedly running it will give you slightly different results. If you are introduced in precision at a yearly level, you might want to increase the `n_samp` argument though will slow the function down a little..e
 
 If you wanted to find each date's median age (though this is often an inappropriate summary and should be treated with caution), use:
 ```{r}
@@ -93,6 +97,17 @@ apply(age_samples, 2, quantile, prob=c(0.5))
 ```
 
 The calibration code is very fast. On a standard PC you should have no trouble calibrating thousands of dates simultaneously without a noticeably long wait.
+
+## Comparing ages
+
+If you want to compare two dates, a good method is to look at the posterior difference between them. Because Bchron provides all the information about the dates through the `sample_ages` function, this difference can be calculated in just a few lines of code.  
+
+```{r}
+age_diff = age_samples[,2] - age_samples[,1]
+hist(age_diff, breaks = 30, freq = FALSE,
+     main = 'Age difference between 3445+/-50 and 11553+/-230')
+```
+
 
 ## Running the Bchronology age-depth model
 
@@ -189,6 +204,55 @@ lines(sed_rate[,'position_grid'], sed_rate[,'97.5%'], lty='dotted')
 
 You could then for example save this to a csv file with, e.g. `write.csv(sed_rate, file = 'Glendalough_sed_rates.csv', quote=FALSE, row.names = FALSE)`
 
+## Identifying influential dates and positions
+
+Bchron contains two functions which can help with future data strategies. They are:
+
+1. Identifying the position at which the maximum age variance occurs. This is useful if you wanted to pick the one next position to date
+2. Identifying which date is the most influential on the chronology. This is useful if you are concerned that one date might be leading the chronology astray.
+
+Identifying the position of maximum age variance can be created with the `summary` command:
+```{r}
+summary(GlenOut, type = 'max_var')
+```
+
+You can control the number of positions reported with `numPos`. For example you could now add a line to mark the most variably layer to the plot with:
+```{r}
+max_var = summary(GlenOut, type = 'max_var', numPos = 1)
+plot(GlenOut,
+     main="Glendalough",
+     xlab='Age (cal years BP)',
+     ylab='Depth (cm)',
+     las=1)
+abline(h = max_var, lty = 'dotted')
+```
+
+Finding the date which has maximum influence in the core is a more computationally intensive procedure and involves running the Bchron model repeatedly, leaving each date out in turn, and quantifying the effect on the chronology of removing each date. The function is called `dateInfluence`. Note that you provide this function with a full run of the Bchron model.
+
+To find the influence, say, of date `Beta-100901` as the median date shift in years when is removed, we would run:
+```{r, eval=FALSE}
+dateInfluence(GlenOut, 
+              whichDate = 'Beta-100901',
+              measure = 'absMedianDiff')
+```
+
+Alternatively, to find the influence of all the dates in terms of the median shift we could use:
+```{r, eval=FALSE}
+dateInfluence(GlenOut, 
+              whichDate = 'all',
+              measure = 'absMedianDiff')
+```
+
+A more compete measure of influence is the Kullback-Leibler (KL) divergence which takes account of the change in the full probability distribution rather than just looking at mean or median age differences when that particular date is left out. The KL divergence version could then be run using:
+
+```{r, eval=FALSE}
+dateInfluence(GlenOut, 
+              whichDate = 'all',
+              measure = 'KL')
+```
+
+The interpretation here is relative. The dates with the largest KL divergence values have the most influence on the chronology in the core.
+
 ## Running RSL rate estimation
 
 The function `BchronRSL` will produce estimated relative sea level rates from a regression model taking into account the uncertainties in age provided by a `Bchronology` run as above. Two example data sets are provided:
@@ -202,33 +266,33 @@ data(TestRSLData)
 These can be run through Bchronology and BchronRSL via:
 
 ```{r,messages=FALSE, results='hide', eval=FALSE}
-RSLrun = Bchronology(ages = TestChronData$ages,
-                     ageSds = TestChronData$ageSds,
-                     positions = TestChronData$position,
-                     positionThicknesses = TestChronData$thickness,
-                     ids = TestChronData$id,
-                     calCurves = TestChronData$calCurves,
-                     jitterPositions = TRUE,
-                     predictPositions = TestRSLData$Depth)
-RSLrun2 = BchronRSL(RSLrun,
-                    RSLmean = TestRSLData$RSL,
-                    RSLsd = TestRSLData$Sigma,
-                    degree = 3)
+RSLchron = Bchronology(ages = TestChronData$ages,
+                       ageSds = TestChronData$ageSds,
+                       positions = TestChronData$position,
+                       positionThicknesses = TestChronData$thickness,
+                       ids = TestChronData$id,
+                       calCurves = TestChronData$calCurves,
+                       jitterPositions = TRUE,
+                       predictPositions = TestRSLData$Depth)
+RSLrun = BchronRSL(RSLchron,
+                   RSLmean = TestRSLData$RSL,
+                   RSLsd = TestRSLData$Sigma,
+                   degree = 3)
 ```
 
 The `Bchronology` run is as described in the section above. The `BChronRSL` run takes this object, an estimate of the RSL means and standard deviations, and a value of degree (here 3 indicating cubic regression). They can then be summarised and plotted via:
 
 ```{r, eval=FALSE}
-summary(RSLrun2, type = 'RSL', age_grid = seq(0, 2000, by  = 250))
-plot(RSLrun2, type = 'RSL', main = 'Relative sea level plot')
-plot(RSLrun2, type = 'rate', main = 'Rate of RSL change')
+summary(RSLrun, type = 'RSL', age_grid = seq(0, 2000, by  = 250))
+plot(RSLrun, type = 'RSL', main = 'Relative sea level plot')
+plot(RSLrun, type = 'rate', main = 'Rate of RSL change')
 ```
 
 See the help files for more options, including outputting parameter values, and plots of acceleration of RSL itself.
 
 ## Running non-parametric phase estimation
 
-Bchron contains two functions for running non-parametric phase models for estimating activity level in a site/region. The first, BchronDensity fits a full Bayesian Gaussian mixture model to the radiocarbon dates whilst the second BchronDensityFast fits an approximate version which will run on much larger data sets. An example run is
+Bchron contains two functions for running non-parametric phase models for estimating activity level in a site/region. The first, BchronDensity fits a full Bayesian Gaussian mixture model to the radiocarbon dates whilst the second `BchronDensityFast` fits an approximate version which will run on much larger data sets. An example run is
 
 ```{r,results='hide', eval=FALSE}
 data(Sluggan)
@@ -253,7 +317,7 @@ plot(SlugDens,xlab='Age (cal years BP)', xaxp=c(0, 16000, 16))
 
 Phases will be shown with a thick black red line. These can be turned off by setting the argument `plotPhase=FALSE` whilst the sensitivity can be changed with `phaseProb`.
 
-BchronDensityFast is identical except for the function call:
+`BchronDensityFast` is identical except for the function call:
 
 ```{r,eval=FALSE}
 SlugDensFast = BchronDensityFast(ages=Sluggan$ages,
@@ -270,26 +334,91 @@ Bchron allows for user-defined calibration curves to be created through the func
   - The calibrated/calendar ages for the new calibration curve
   - The uncalibrated (e.g. 14C) ages for the new calibration curve
   - (Optionally) the 1-sigma error for the calibration curve in uncalibrated years. If not included the error is assumed to be zero
+  - (Optionally) The path to where the resulting file will be stored
 
-Once run, the calibration curve can be used for all future runs until the package is deleted or re-installed. The calibration curve can be used by simply calling it in any other Bchron function using the supplied name. Note that no name checking is done, so it is possible to over-write the pre-defined calibration curves if
+Once run, the calibration curve needs to be moved from the chosen path (by default the working direcory) to the location of the other calibration curves. This is by default `system.file('data',package='Bchron')`. The resulting calibration curve can be used for all future runs until the package is deleted or re-installed. The calibration curve can be used by simply calling it in any other Bchron function using the supplied name. Note that no name checking is done, so it is possible to over-write the pre-defined calibration curves if
 
 As an example, consider installing the intcal09 calibration curve, as available from (http://www.radiocarbon.org/IntCal09%20files/intcal09.14c)[here]. We can run the following code:
 
-```{r}
+```{r, eval = FALSE}
 # Load in the calibration curve with:
 intcal09 = read.table('http://www.radiocarbon.org/IntCal09%20files/intcal09.14c',sep=',')
 # Run CreateCalCurve
 CreateCalCurve(name='intcal09',cal_ages=intcal09[,1],uncal_ages=intcal09[,2],one_sigma=intcal09[,3])
 ```
 
-The new calibration curve can now be used via its name. For example, we can now compare the calibration of a date under the intcal09 curve with that of intcal13:
-```{r}
+The new calibration curve now needs to be moved to the Bchron package directory. It can then be used via its name. For example, we can now compare the calibration of a date under the intcal09 curve with that of intcal13:
+```{r, eval = FALSE}
 age_09 = BchronCalibrate(age=15500,ageSds=150,calCurves = 'intcal09',ids='My Date')
 age_13 = BchronCalibrate(age=15500,ageSds=150,calCurves = 'intcal13')
 plot(age_09)
 lines(age_13$Date1$ageGrid,age_13$Date1$densities,col='red')
 legend('topleft',legend=c('intcal09','intcal13'),col=c('black','red'),lty=1)
 ```
+
+## Uncalibrating dates
+
+Sometimes it is useful to turn a calendar age estimate into an uncalibrated age. This might be for simulation or model checking purposes. 'Un-calibrating' dates can be implemented in Bchron using the `unCalibrate` function. There are two versions, one where you have a single age and just want to get a quick look up of the 14C age, and another where you have the full distribution of the calibrated age and want to estimate both the 14C age and its associated error
+
+The simple version can be run with, e.g.:
+
+```{r, results = 'hide'}
+unCal1 = unCalibrate(2350, type = 'ages')
+```
+```{r}
+print(unCal1)
+```
+
+The above un-calibrates the age 2350 BP to the age 2346 14C years BP on the intcal13 calibration curve. A more advanced version would be:
+
+```{r, results = 'hide'}
+unCal2 = unCalibrate(calAge = c(2350, 4750, 11440),
+                     calCurve = 'shcal13',
+                     type = 'ages')
+```
+```{r}
+print(unCal2)
+```
+
+A fun experiment can then be run to see what the distribution of 14C ages would look like for an even distribution of calendar ages:
+
+```{r, results = 'hide'}
+ageRange = seq(8000, 9000, by = 5)
+c14Ages = unCalibrate(ageRange,
+                      type = 'ages')
+load(system.file('data/intcal13.rda', package = 'Bchron'))
+plot(intcal13[,1], intcal13[, 2], 
+     xlim = range(ageRange),
+     ylim = range(c14Ages),
+     type = 'l',
+     las = 1,
+     xlab = '14C years BP',
+     ylab = 'Cal years BP')
+axis(side = 1, at = ageRange, labels = FALSE, tcl = 0.5)
+axis(side = 2, at = c14Ages, labels = FALSE, tcl = 0.5)
+```
+
+Unsurprisingly the places where the calibration curve is flat (or reverses) leads to 'clumps' of calendar ages. 
+
+The more complicated version is run by providing it with a (preferably large) sample of ages which form a calibrated date. Such a set is created with Bchron via `sampleAges`, e.g.:
+```{r}
+calAge = BchronCalibrate(ages = 11255,
+                         ageSds = 25,
+                         calCurves = 'intcal13')
+calSampleAges = sampleAges(calAge)
+```
+
+We can now uncalibrate such a set of samples
+
+```{r, results = 'hide'}
+unCal = unCalibrate(calSampleAges,
+            type = 'samples')
+```
+```{r}
+print(unCal)
+```
+
+This will provide a single best estimate of the mean and standard deviation of the uncalibrated (here 14C) date.
 
 ## References
 

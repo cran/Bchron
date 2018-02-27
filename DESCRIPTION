@@ -2,26 +2,28 @@ Package: Bchron
 Type: Package
 Title: Radiocarbon Dating, Age-Depth Modelling, Relative Sea Level Rate
         Estimation, and Non-Parametric Phase Modelling
-Version: 4.2.6
-Date: 2016-12-11
+Version: 4.2.7
+Date: 2018-02-26
 Depends: R (>= 2.10),
 Imports: utils, MASS, ellipse, coda, mclust, inline
 Encoding: UTF-8
 Author: Andrew Parnell
 Maintainer: Andrew Parnell <Andrew.Parnell@ucd.ie>
-Description: Enables quick calibration of radiocarbon dates under various
-    calibration curves (including user generated ones); Age-depth modelling as
-    per the algorithm of Haslett and Parnell (2008) <DOI:10.1111/j.1467-9876.2008.00623.x>; Relative sea level rate
-    estimation incorporating time uncertainty in polynomial regression models; and
-    non-parametric phase modelling via Gaussian mixtures as a means to determine
-    the activity of a site (and as an alternative to the Oxcal function SUM). The
-    package includes a vignette which explains most of the basic functionality.
+Description: Enables quick calibration of radiocarbon dates under various 
+  calibration curves (including user generated ones); age-depth modelling 
+  as per the algorithm of Haslett and Parnell (2008) <DOI:10.1111/j.1467-9876.2008.00623.x>; Relative sea level 
+  rate estimation incorporating time uncertainty in polynomial regression 
+  models (Parnell and Gehrels 2015) <DOI:10.1002/9781118452547.ch32>; non-parametric phase modelling via 
+  Gaussian mixtures as a means to determine the activity of a site 
+  (and as an alternative to the Oxcal function SUM; currently 
+  unpublished), and reverse calibration of dates from calibrated into 
+  un-calibrated years (also unpublished).
 License: GPL (>= 2)
 URL: https://github.com/andrewcparnell/Bchron
 Suggests: knitr
 VignetteBuilder: knitr
-NeedsCompilation: no
-RoxygenNote: 5.0.1
-Packaged: 2016-12-13 11:56:27 UTC; andrewparnell
+NeedsCompilation: yes
+RoxygenNote: 6.0.1
+Packaged: 2018-02-26 23:35:55 UTC; andrewparnell
 Repository: CRAN
-Date/Publication: 2016-12-13 15:33:03
+Date/Publication: 2018-02-27 17:58:58 UTC
