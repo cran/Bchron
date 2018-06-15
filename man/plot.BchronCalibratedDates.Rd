@@ -5,11 +5,12 @@
 \title{Plot calibrated dates from a BchronCalibrate run}
 \usage{
 \method{plot}{BchronCalibratedDates}(x, withPositions = FALSE,
-  pause = FALSE, dateHeight = 30, borderCol = NULL, fillCol = "gray",
-  withHDR = TRUE, hdrCol = "darkgray", ...)
+  pause = FALSE, dateHeight = 30, borderCol = NULL,
+  fillCols = rep("gray", length(x)), withHDR = TRUE, hdrCol = "darkgray",
+  ...)
 }
 \arguments{
-\item{x}{Output from BchronCalibrate}
+\item{x}{Output from \code{\link{BchronCalibrate}}}
 
 \item{withPositions}{Whether to plot with positions (i.e. using the position values as the y axis). Default is FALSE in which case it will produce a sequence of plots, one for each calibrated age.}
 
@@ -19,7 +20,7 @@
 
 \item{borderCol}{The colour of the edges of the dates. If \code{NULL} there are no edges drawn}
 
-\item{fillCol}{The fill colour of the dates}
+\item{fillCols}{A vector of colours to fill each date density}
 
 \item{withHDR}{Whether to plot the 95\% highest density region values}
 
