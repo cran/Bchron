@@ -21,7 +21,7 @@ function(object,
                 'sed_rate', 
                 'acc_rate',
                 'max_var'),
-         probs=c(0.025, 0.1, 0.5, 0.9, 0.975), 
+         probs = c(0.025, 0.25, 0.5, 0.75, 0.975),
          useExisting = TRUE, 
          numPos = 3,
          ..., 
@@ -71,7 +71,7 @@ function(object,
       sed_rate_ci = cbind(position_grid[-1], t(apply(sed_rate, 1, stats::quantile, probs = probs)))
       colnames(sed_rate_ci)[1] = 'position_grid'
       print(round(sed_rate_ci, digits=digits),row.names=FALSE)
-      invisible(sed_rate_ci)
+      invisible(as.data.frame(sed_rate_ci))
     },
     acc_rate = {
       cat('Accumulation rate (position units per time unit): \n')
@@ -83,7 +83,7 @@ function(object,
       acc_rate_ci = cbind(age_grid[-1], t(apply(acc_rate, 1, stats::quantile, probs = probs)))
       colnames(acc_rate_ci)[1] = 'age_grid'
       print(round(acc_rate_ci, digits=digits),row.names=FALSE)
-      invisible(acc_rate_ci)
+      invisible(as.data.frame(acc_rate_ci))
     },
     max_var = {
       if(numPos==1) {
