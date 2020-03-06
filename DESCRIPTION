@@ -2,11 +2,11 @@ Package: Bchron
 Type: Package
 Title: Radiocarbon Dating, Age-Depth Modelling, Relative Sea Level Rate
         Estimation, and Non-Parametric Phase Modelling
-Version: 4.5.0
-Date: 2020-01-13
+Version: 4.6.1
+Date: 2020-03-06
 Depends: R (>= 3.4.0),
-Imports: utils, MASS, ellipse, coda, mclust, ggplot2, ggridges,
-        magrittr, purrr, viridis, ggforce, dplyr, scales, stringr
+Imports: utils, MASS, coda, mclust, ggplot2, ggridges, magrittr, purrr,
+        ggforce, dplyr, scales, stringr
 Encoding: UTF-8
 Author: Andrew Parnell
 Maintainer: Andrew Parnell <Andrew.Parnell@mu.ie>
@@ -25,6 +25,6 @@ Suggests: knitr
 VignetteBuilder: knitr
 NeedsCompilation: yes
 RoxygenNote: 7.0.2
-Packaged: 2020-01-15 10:36:18 UTC; andrewparnell
+Packaged: 2020-03-06 21:30:58 UTC; andrewparnell
 Repository: CRAN
-Date/Publication: 2020-01-15 13:40:02 UTC
+Date/Publication: 2020-03-06 21:50:02 UTC
