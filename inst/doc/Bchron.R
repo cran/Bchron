@@ -200,9 +200,12 @@ data(TestRSLData)
 
 ## ---- eval = FALSE------------------------------------------------------------
 #  # Load in the calibration curve with:
-#  intcal09 = read.table('http://www.radiocarbon.org/IntCal09%20files/intcal09.14c',sep=',')
+#  intcal09 = read.table(system.file('extdata/intcal09.14c',
+#                                    package = 'Bchron'), sep=',')
+#  
 #  # Run createCalCurve
-#  createCalCurve(name='intcal09',cal_ages=intcal09[,1],uncal_ages=intcal09[,2],one_sigma=intcal09[,3])
+#  createCalCurve(name='intcal09',calAges=intcal09[,1],
+#                 uncalAges=intcal09[,2],oneSigma=intcal09[,3])
 
 ## ---- eval = FALSE------------------------------------------------------------
 #  file.copy('intcal09.rda', system.file('data',package='Bchron'))
@@ -212,8 +215,9 @@ data(TestRSLData)
 #                           ids='IntCal09')
 #  age_13 = BchronCalibrate(age=15500,ageSds=150,calCurves = 'intcal13',
 #                           ids = 'Intcal13')
+#  library(ggplot2)
 #  plot(age_09) +
-#    geom_line(data = as.data.frame(age_13$Intcal13),
+#    geom_line(data = as.data.frame(age_13$Date1),
 #              aes(x = ageGrid, y = densities), col = 'red') +
 #    ggtitle('Intcal09 vs Intcal13')
 
