@@ -11,7 +11,7 @@ library(Bchron)
 ## ----fig.align='center',fig.width=6,fig.height=5------------------------------
 ages1 = BchronCalibrate(ages=11553,
                         ageSds=230,
-                        calCurves='intcal13',
+                        calCurves='intcal20',
                         ids='Ox-123456')
 summary(ages1)
 plot(ages1)
@@ -19,15 +19,15 @@ plot(ages1)
 ## ----results='hide'-----------------------------------------------------------
 ages2 = BchronCalibrate(ages=c(3445,11553,7456), 
                         ageSds=c(50,230,110), 
-                        calCurves=c('intcal13','intcal13','shcal13'))
+                        calCurves=c('intcal20','intcal20','shcal20'))
 summary(ages2)
 plot(ages2)
 
 ## ----fig.align='center',fig.width=6,fig.height=5------------------------------
-ages3 = BchronCalibrate(ages=c(1000,11553), 
-                        ageSds=c(50,230), 
+ages3 = BchronCalibrate(ages=c(3445,11000), 
+                        ageSds=c(50,200), 
                         positions=c(100,150), 
-                        calCurves=c('intcal13','normal'))
+                        calCurves=c('intcal20','normal'))
 summary(ages3)
 plot(ages3)
 
@@ -213,13 +213,13 @@ data(TestRSLData)
 ## ---- eval = FALSE------------------------------------------------------------
 #  age_09 = BchronCalibrate(age=15500,ageSds=150,calCurves = 'intcal09',
 #                           ids='IntCal09')
-#  age_13 = BchronCalibrate(age=15500,ageSds=150,calCurves = 'intcal13',
-#                           ids = 'Intcal13')
+#  age_20 = BchronCalibrate(age=15500,ageSds=150,calCurves = 'intcal20',
+#                           ids = 'Intcal20')
 #  library(ggplot2)
 #  plot(age_09) +
-#    geom_line(data = as.data.frame(age_13$Date1),
+#    geom_line(data = as.data.frame(age_20$Intcal20),
 #              aes(x = ageGrid, y = densities), col = 'red') +
-#    ggtitle('Intcal09 vs Intcal13')
+#    ggtitle('Intcal09 vs Intcal20')
 
 ## ---- results = 'hide'--------------------------------------------------------
 unCal1 = unCalibrate(2350, type = 'ages')
@@ -229,7 +229,7 @@ print(unCal1)
 
 ## ---- results = 'hide'--------------------------------------------------------
 unCal2 = unCalibrate(calAge = c(2350, 4750, 11440),
-                     calCurve = 'shcal13',
+                     calCurve = 'intcal20',
                      type = 'ages')
 
 ## -----------------------------------------------------------------------------
@@ -239,8 +239,8 @@ print(unCal2)
 ageRange = seq(8000, 9000, by = 5)
 c14Ages = unCalibrate(ageRange,
                       type = 'ages')
-load(system.file('data/intcal13.rda', package = 'Bchron'))
-ggplot(intcal13, aes(x = V1, y = V2)) + 
+load(system.file('data/intcal20.rda', package = 'Bchron'))
+ggplot(intcal20, aes(x = V1, y = V2)) + 
   geom_line() + 
   theme_bw() + 
   scale_x_continuous(limits = range(ageRange)) + 
@@ -254,7 +254,7 @@ ggplot(intcal13, aes(x = V1, y = V2)) +
 ## -----------------------------------------------------------------------------
 calAge = BchronCalibrate(ages = 11255,
                          ageSds = 25,
-                         calCurves = 'intcal13')
+                         calCurves = 'intcal20')
 calSampleAges = sampleAges(calAge)
 
 ## ---- results = 'hide'--------------------------------------------------------
@@ -263,4 +263,34 @@ unCal = unCalibrate(calSampleAges,
 
 ## -----------------------------------------------------------------------------
 print(unCal)
+
+## ---- results = 'hide'--------------------------------------------------------
+data(Glendalough)
+GlenOut = with(Glendalough, 
+               Bchronology(ages=ages,
+                           ageSds=ageSds, 
+                           calCurves=calCurves,
+                           positions=position, 
+                           positionThicknesses=thickness,
+                           ids=id, 
+                           predictPositions=seq(0,1500,by=10)))
+
+## -----------------------------------------------------------------------------
+new_cal = BchronCalibrate(ages = 7000, 
+                          ageSds = 40, 
+                          calCurve = 'intcal20')
+
+## -----------------------------------------------------------------------------
+library(ggplot2)
+library(ggridges)
+plot(GlenOut) +
+  geom_ridgeline(data = as.data.frame(new_cal$Date1), 
+                 aes(x = ageGrid, 
+                     y = 600,
+                     height = densities*10000, # Note the 10000 came from trial and error
+                     group = 'New date',
+                     ),
+                 fill = 'grey',
+                 colour = 'black') +
+  annotate("text", x = 9000, y = 570, label = "New date")
 

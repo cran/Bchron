@@ -1,3 +1,7 @@
+# Bchron 4.7.2
+
+  - Included intcal20, shcal20, and marine20 new calibration curves
+
 # Bchron 4.7.1
 
   - Fixed a bug in Bchronology that caused incorrect predictions
