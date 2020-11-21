@@ -28,7 +28,7 @@ If you find bugs or want to suggest new features please visit the Bchron [GitHub
 
 ## Installing Bchron
 
-Bchron will run in Windows, Mac OS X or Linux. To install Bchron you first need to install [R](https://www.r-project.org). I would also recommend installing [Rstudio](http://www.rstudio.com) as a nice desktop environment for using R. Once in R you can type:
+Bchron will run in Windows, Mac OS X or Linux. To install Bchron you first need to install [R](https://www.r-project.org). I would also recommend installing [Rstudio](https://rstudio.com) as a nice desktop environment for using R. Once in R you can type:
 
 ```{r,eval=FALSE}
 install.packages('Bchron')
@@ -69,9 +69,17 @@ summary(ages2)
 plot(ages2)
 ```
 
-This will calibrate three different 14C ages with the calibration curves as specified in the `calCurves` argument. The `summary` and `plot` commands will produce individual highest density regions and density plots for the three dates.
+This will calibrate three different 14C ages with the calibration curves as specified in the `calCurves` argument. The `summary` and `plot` commands will produce individual highest density regions and density plots for the three dates. 
 
-Finally, if you provide position information (e.g. depths) to the BchronCalibrate function it will create a plot with position on the y-axis, e.g.:
+You can plot individual dates from a calibration of multiple dates by name or number, e.g.
+
+```{r, eval=FALSE}
+plot(ages2, date = 'Date3')
+plot(ages2, date = 1:2)
+```
+
+
+If you provide position information (e.g. depths) to the BchronCalibrate function it will create a plot with position on the y-axis, e.g.:
 
 ```{r,fig.align='center',fig.width=6,fig.height=5}
 ages3 = BchronCalibrate(ages=c(3445,11000), 
@@ -98,6 +106,20 @@ plot(ages3, ageScale = 'bc', scaleReverse = FALSE) +
        y = 'Depth (cm)',
        title = 'Two dates at different depths')
 ```
+
+... or add the calibration curve into the plot
+```{r}
+plot(ages1, includeCal = TRUE)
+```
+
+... or add multiple dates into the calibration curve plots
+```{r}
+ages4 = BchronCalibrate(ages=c(3445,11553,7456), 
+                        ageSds=c(50,230,110), 
+                        calCurves=rep('intcal20',3))
+plot(ages4, includeCal = TRUE, fillCol = 'orange')
+```
+
 
 ## Credible intervals
 

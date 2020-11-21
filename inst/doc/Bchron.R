@@ -23,6 +23,10 @@ ages2 = BchronCalibrate(ages=c(3445,11553,7456),
 summary(ages2)
 plot(ages2)
 
+## ---- eval=FALSE--------------------------------------------------------------
+#  plot(ages2, date = 'Date3')
+#  plot(ages2, date = 1:2)
+
 ## ----fig.align='center',fig.width=6,fig.height=5------------------------------
 ages3 = BchronCalibrate(ages=c(3445,11000), 
                         ageSds=c(50,200), 
@@ -43,6 +47,15 @@ plot(ages3, ageScale = 'bc', scaleReverse = FALSE) +
   labs(x = 'Age (years BC/AD)',
        y = 'Depth (cm)',
        title = 'Two dates at different depths')
+
+## -----------------------------------------------------------------------------
+plot(ages1, includeCal = TRUE)
+
+## -----------------------------------------------------------------------------
+ages4 = BchronCalibrate(ages=c(3445,11553,7456), 
+                        ageSds=c(50,230,110), 
+                        calCurves=rep('intcal20',3))
+plot(ages4, includeCal = TRUE, fillCol = 'orange')
 
 ## -----------------------------------------------------------------------------
 # First create age samples for each date
