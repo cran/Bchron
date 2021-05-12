@@ -11,12 +11,13 @@ BchronCalibrate(
   ids = NULL,
   positions = NULL,
   pathToCalCurves = system.file("data", package = "Bchron"),
+  allowOutside = FALSE,
   eps = 1e-05,
   dfs = rep(100, length(ages))
 )
 }
 \arguments{
-\item{ages}{A vector of ages (most likely 14C)}
+\item{ages}{A vector of ages provided in years before 1950.}
 
 \item{ageSds}{A vector of 1-sigma values for the ages given above}
 
@@ -27,6 +28,8 @@ BchronCalibrate(
 \item{positions}{Position values (e.g. depths) for each age}
 
 \item{pathToCalCurves}{File path to where the calibration curves are located. Defaults to the system directory where the 3 standard calibration curves are stored.}
+
+\item{allowOutside}{Whether to allow calibrations to run outside the range of the calibration curve. By default this is turned off as calibrations outside of the range of the calibration curve can cause severe issues with probability ranges of calibrated dates}
 
 \item{eps}{Cut-off point for density calculation. A value of eps>0 removes ages from the output which have negligible probability density}
 
@@ -64,6 +67,9 @@ ages1 <- BchronCalibrate(
 )
 summary(ages1)
 plot(ages1)
+
+# Or plot with Calibration curve
+plot(ages1, includeCal = TRUE)
 
 # Calibrate multiple ages with different calibration curves
 ages2 <- BchronCalibrate(

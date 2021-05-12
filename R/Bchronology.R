@@ -2,25 +2,23 @@
 #'
 #' Fits a non-parametric chronology model to age/position data according to the Compound Poisson-Gamma model defined by Haslett and Parnell (2008) <DOI:10.1111/j.1467-9876.2008.00623.x>. This version uses a slightly modified Markov chain Monte Carlo fitting algorithm which aims to converge quicker and requires fewer iterations. It also a slightly modified procedure for identifying outliers
 #'
-#' @param ages A vector of ages (most likely 14C)
-#' @param ageSds A vector of 1-sigma values for the ages given above
-#' @param positions Position values (e.g. depths) for each age
+#' @inheritParams BchronCalibrate
+#'
 #' @param positionThicknesses Thickness values for each of the positions. The thickness value should be the full thickness value of the slice. By default set to zero.
-#' @param calCurves A vector of values containing either 'intcal20', 'shcal20', 'marine20', or 'normal' (older calibration curves are also supported, e.g. intcal13). Should be the same length the number of ages supplied. Non-standard calibration curves can be used provided they are supplied in the same format as those previously mentioned and are placed in the same directory, or created via \code{\link{createCalCurve}}. Normal indicates a normally-distributed (non-14C) age.
-#' @param ids ID names for each age
 #' @param outlierProbs A vector of prior outlier probabilities, one for each age. Defaults to 0.01
 #' @param predictPositions A vector of positions (e.g. depths) at which predicted age values are required. Defaults to a sequence of length 100 from the top position to the bottom position
-#' @param pathToCalCurves File path to where the calibration curves are located. Defaults to the system directory where the 3 standard calibration curves are stored.
 #' @param jitterPositions Whether to jigger the positions at startup or not. Default is FALSE but if there are lots of dates at similar depths this may resolve some initialisation problems
 #' @param iterations The number of iterations to run the procedure for
 #' @param burn The number of starting iterations to discard
-#' @param thin The step size for every iteration to keep beyond the burnin
+#' @param thin The step size for every iteration to keep beyond the burn-in
 #' @param extractDate The top age of the core. Used for extrapolation purposes so that no extrapolated ages go beyond the top age of the core. Defaults to the current year
-#' @param maxExtrap The maximum number of extrapolations to perform before giving up and setting the predicted ages to NA. Useful for when large amounts of extrapolation are required, i.e. some of the predictPositions are a long way from the dated positions
+#' @param maxExtrap The maximum number of extrapolations to perform before giving up and setting the predicted ages to NA. Useful for when large amounts of extrapolation are required, i.e. some of the \code{predictPositions} are a long way from the dated positions
+#' @param thetaStart A set of starting values for the calendar ages estimated by Bchron. If NULL uses a function to estimate the ages. These should be in the same units as the posterior ages required. See example below for usage.
 #' @param thetaMhSd The Metropolis-Hastings standard deviation for the age parameters
 #' @param muMhSd The Metropolis-Hastings standard deviation for the Compound Poisson-Gamma mean
 #' @param psiMhSd The Metropolis-Hastings standard deviation for the Compound Poisson-Gamma scale
 #' @param ageScaleVal A scale value for the ages. \code{Bchronology} works best when the ages are scaled to be approximately between 0 and 100. The default value is thus 1000 for ages given in years.
+#' @param positionEps A small value used to check whether simulated positions are far enough apart to avoid numerical underflow errors. If errors occur in model runs (e.g. \code{missing value where TRUE/FALSE needed} increase this value)
 #' @param positionNormalise Whether to normalise the position values. \code{Bchronology} works best when the positions are normalise to be between 0 and 1 The default value is \code{TRUE}
 #'
 #' @details
@@ -76,6 +74,22 @@
 #'
 #' # Plot the output
 #' plot(GlenOut, main = "Glendalough", xlab = "Age (cal years BP)", ylab = "Depth (cm)", las = 1)
+#'
+#' # If you need to specify your own starting values
+#' startingAges <- c(0, 2000, 10000, 11000, 13000, 13500)
+#' GlenOut <- with(
+#'   Glendalough,
+#'   Bchronology(
+#'     ages = ages,
+#'     ageSds = ageSds,
+#'     calCurves = calCurves,
+#'     positions = position,
+#'     positionThicknesses = thickness,
+#'     ids = id,
+#'     predictPositions = seq(0, 1500, by = 10),
+#'     thetaStart = startingAges
+#'   )
+#' )
 #' }
 #'
 #' @export
@@ -98,15 +112,18 @@ Bchronology <- function(ages,
                         ),
                         pathToCalCurves = system.file("data", package = "Bchron"),
                         jitterPositions = FALSE,
+                        allowOutside = FALSE,
                         iterations = 10000,
                         burn = 2000,
                         thin = 8,
                         extractDate = 1950 - as.numeric(format(Sys.time(), "%Y")),
                         maxExtrap = 1000,
+                        thetaStart = NULL,
                         thetaMhSd = 0.5,
                         muMhSd = 0.1,
                         psiMhSd = 0.1,
                         ageScaleVal = 1000,
+                        positionEps = 1e-5,
                         positionNormalise = TRUE) {
 
   # Notation:
@@ -114,10 +131,38 @@ Bchronology <- function(ages,
   # phi are the outlier indicators (1=TRUE or 0=FALSE) for date i
   # mu,psi are the Compound Poisson-Gamma parameters controlling sedimentation
 
+  # Run data checks ---------------------------------------------------------
+
+  # Run the Bchron check function in case things have gone wrong
+  BchronCheck(
+    ages = ages,
+    ageSds = ageSds,
+    positions = positions,
+    positionThicknesses = positionThicknesses,
+    calCurves = calCurves,
+    ids = ids,
+    outlierProbs = outlierProbs,
+    predictPositions = predictPositions,
+    pathToCalCurves = pathToCalCurves,
+    jitterPositions = jitterPositions,
+    allowOutside = allowOutside,
+    iterations = iterations,
+    thetaStart = thetaStart,
+    burn = burn,
+    thin = thin,
+    extractDate = extractDate,
+    maxExtrap = maxExtrap,
+    thetaMhSd = thetaMhSd,
+    muMhSd = muMhSd,
+    psiMhSd = psiMhSd,
+    ageScaleVal = ageScaleVal,
+    positionEps = positionEps,
+    positionNormalise = positionNormalise,
+    type = "Bchronology"
+  )
 
   # Re-normalise positions --------------------------------------------------
 
-  # Re-normalise all the positions
   originalPositions <- positions
   originalPositionThicknesses <- positionThicknesses
   originalPredictPositions <- predictPositions
@@ -169,6 +214,7 @@ Bchronology <- function(ages,
     positions = originalPositions,
     ids = ids,
     pathToCalCurves = pathToCalCurves,
+    allowOutside = allowOutside,
     eps = 0,
     dfs = rep(dfs[1], length(ages))
   )
@@ -179,9 +225,35 @@ Bchronology <- function(ages,
     positions = originalPositions,
     ids = ids,
     pathToCalCurves = pathToCalCurves,
+    allowOutside = allowOutside,
     eps = 0,
     dfs = rep(dfs[2], length(ages))
   )
+
+  # Finally - need to make sure that all calibrated dates have the same ageGrids
+  # This is to avoid the situation where the depth order swaps and you end up
+  # with ages that run outside their calibration curve ranges
+  # The densities outside this range are set to zero
+  range1 <- range(lapply(x.df1, "[", "ageGrid"))
+  range2 <- range(lapply(x.df2, "[", "ageGrid"))
+  masterAgeGrid1 <- seq(min(range1), max(range1), by = 1)
+  masterAgeGrid2 <- seq(min(range2), max(range2), by = 1)
+  for (j in 1:length(x.df1)) {
+    if (!setequal(x.df1[[j]]$ageGrid, masterAgeGrid1)) {
+      currAgeGrid <- x.df1[[j]]$ageGrid
+      currDensities <- x.df1[[j]]$densities
+      x.df1[[j]]$densities <- rep(0, length(masterAgeGrid1))
+      x.df1[[j]]$densities[match(x.df1[[j]]$ageGrid, masterAgeGrid1)] <- currDensities
+      x.df1[[j]]$ageGrid <- masterAgeGrid1
+    }
+    if (!setequal(x.df2[[j]]$ageGrid, masterAgeGrid2)) {
+      currAgeGrid <- x.df2[[j]]$ageGrid
+      currDensities <- x.df2[[j]]$densities
+      x.df2[[j]]$densities <- rep(0, length(masterAgeGrid2))
+      x.df2[[j]]$densities[match(x.df2[[j]]$ageGrid, masterAgeGrid2)] <- currDensities
+      x.df2[[j]]$ageGrid <- masterAgeGrid2
+    }
+  }
 
   # Function to find decimal places of positions
   decimalplaces <- Vectorize(function(x) {
@@ -191,6 +263,8 @@ Bchronology <- function(ages,
       return(0)
     }
   })
+
+
 
 
   # Jitter positions --------------------------------------------------------
@@ -214,11 +288,9 @@ Bchronology <- function(ages,
   diffPosition <- diff(currPositions)
   do <- order(currPositions)
 
-  # For any calibration curves that don't start at 0, we need an offset to enable fast lookup - only supported one so far is normal
-  offset <- rep(0, length = n)
-  for (i in 1:n) {
-    offset[i] <- ifelse(x.df1[[i]]$calCurve == "normal", 100, 0)
-  }
+  # For all dates we need an offset to enable fast lookup
+  # The offset will be the same for all if we're using a master ageGrid
+  offset <- rep(-min(x.df1[[1]]$ageGrid), length = n)
 
   # Useful C functions ------------------------------------------------------
 
@@ -227,7 +299,7 @@ Bchronology <- function(ages,
     if (isTRUE(all.equal(low, high, tolerance = 1e-4))) {
       return(list(new = low, rat = 1))
     }
-    if (high < low) stop("Error - truncatedWalk has lower limit higher than upper limit")
+    if (high < low) warning("truncatedWalk has lower limit higher than upper limit")
 
     new <- .C(
       "truncatedWalk",
@@ -353,38 +425,42 @@ Bchronology <- function(ages,
 
   # Starting values ---------------------------------------------------------
 
-  # Starting values
-  theta <- vector(length = n)
-  # Make sure no theta values are identical
-  badThetas <- TRUE
-
-  while (badThetas) {
-    for (j in 1:n) {
-      # Use truncatedWalk to get new values to avoid going outside range of extractDate
-      theta[j] <- round(
-        truncatedWalk(
-          old = x.df2[[j]]$ageGrid[match(max(x.df2[[j]]$densities), x.df2[[j]]$densities)] / ageScaleVal,
-          sd = ageSds[j] / ageScaleVal,
-          # low = extractDate / ageScaleVal,
-          low = min(x.df2[[j]]$ageGrid) / ageScaleVal,
-          high = 1e9
-        )$new,
-        digits = 3
-      )
-      # OLD VERSION USING RNORM
-      # theta[j] <- round(
-      #   stats::rnorm(n = 1,
-      #                mean = x.df2[[j]]$ageGrid[match(max(x.df2[[j]]$densities), x.df2[[j]]$densities)] /ageScaleVal,
-      #     sd = ageSds[j] / ageScaleVal),
-      #   digits = 3
-      # )
+  # Written by Nathan McJames - calculate starting values
+  if (is.null(thetaStart)) {
+    thetaStart <- function(a, b, ageGrids, ageDensities) {
+      minbs <- rev(cummin(rev(b)))
+      maxas <- cummax(a)
+      if (any(minbs < maxas)) {
+        stop("Invalid starting values. Use the thetaStart argument to specify valid starting calendar ages")
+      } else {
+        raw_soln <- rep(NA, length(b))
+        for (u in 1:length(b)) {
+          currAgeGrid <- ageGrids[[u]]$ageGrid / ageScaleVal
+          currDensities <- ageDensities[[u]]$densities
+          # Remove previous values from ageGrid
+          currAgeGrid <- currAgeGrid[which(!currAgeGrid %in% raw_soln[1:(u - 1)])]
+          currDensities <- currDensities[which(!currAgeGrid %in% raw_soln[1:(u - 1)])]
+          # Now derive raw (unsorted solutions)
+          raw_soln[u] <- sample(
+            x = currAgeGrid[currAgeGrid >= maxas[u] & currAgeGrid <= minbs[u]],
+            size = 1,
+            prob = currDensities[currAgeGrid >= maxas[u] & currAgeGrid <= minbs[u]]
+          )
+        }
+        soln <- sort(raw_soln)
+        if (any(diff(soln) < 1e-4)) stop(paste0("Invalid starting values. Use the thetaStart argument to specify valid starting calendar ages. Bchron's initial guess was c(", paste(soln, collapse = ", "), ")"))
+        return(sort(soln))
+      }
     }
-    theta <- sort(theta)
-    if (all(diff(theta) != 0)) {
-      badThetas <- FALSE
-    }
+    ageGrids <- lapply(x.df2, "[", "ageGrid")
+    ageDensities <- lapply(x.df2, "[", "densities")
+    ranges <- do.call(rbind, lapply(ageGrids, range)) / ageScaleVal
+    theta <- thetaStart(ranges[, 1], ranges[, 2], ageGrids, ageDensities)
+  } else {
+    theta <- thetaStart / ageScaleVal
   }
 
+  # Other starting values
   phi <- rep(0, length(theta))
   p <- 1.2
   mu <- abs(stats::rnorm(
@@ -424,14 +500,18 @@ Bchronology <- function(ages,
     if (any(positionThicknesses > 0) &
       i > 0.5 * burn & i %% thin == 0) {
       # Get date order so I can preserve things if they change around
-      currPositions <- stats::runif(
-        n,
-        positions - 0.5 * positionThicknesses,
-        positions + 0.5 * positionThicknesses
-      )
-      do <- order(currPositions)
-      diffPosition <- diff(currPositions[do])
-      theta[do] <- sort(theta)
+      badPositions <- TRUE
+      while (badPositions) {
+        currPositions <- stats::runif(
+          n,
+          positions - 0.5 * positionThicknesses,
+          positions + 0.5 * positionThicknesses
+        )
+        do <- order(currPositions)
+        diffPosition <- diff(currPositions[do])
+        theta[do] <- sort(theta)
+        if (all(diffPosition > positionEps)) badPositions <- FALSE
+      }
     }
 
 
@@ -528,11 +608,16 @@ Bchronology <- function(ages,
         j == 1,
         ifelse(x.df1[[j]]$calCurve == "normal",
           extractDate / ageScaleVal,
-          min(x.df1[[j]]$ageGrid)
+          min(x.df1[[j]]$ageGrid) / ageScaleVal
         ),
         theta[do[j - 1]] + 0.001
       )
-      upperLimit <- ifelse(j == n, 100000, theta[do[j + 1]] - 0.001)
+      # upperLimit <- ifelse(j == n, 100000, theta[do[j + 1]] - 0.001)
+      upperLimit <- ifelse(j == n,
+        max(x.df1[[j]]$ageGrid) / ageScaleVal,
+        theta[do[j + 1]] - 0.001
+      )
+
       thetaNewAll <- truncatedWalk(
         theta[do[j]],
         thetaMhSd,
@@ -577,7 +662,6 @@ Bchronology <- function(ages,
         mu * (diffPosition[j]),
         psi / (diffPosition[j])^(p - 1)
       )))
-
       logRtheta <- thetaNewLogDens - thetaLogDens + priorNewLogDens - priorLogDens + log(thetaNewAll$rat)
       if (stats::runif(1) < exp(logRtheta)) {
         theta[do[j]] <- thetaNew
@@ -620,7 +704,7 @@ Bchronology <- function(ages,
     }
 
     # Update mu
-    muNewAll <- truncatedWalk(mu, muMhSd, 1e-4, 1e3)
+    muNewAll <- truncatedWalk(mu, muMhSd, 1e-3, 1e3)
     muNew <- muNewAll$new
 
     logRmu <- sum(log(dtweediep1(

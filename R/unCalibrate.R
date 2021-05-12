@@ -40,6 +40,9 @@ unCalibrate <- function(calAges,
                         pathToCalCurves = system.file("data", package = "Bchron"),
                         ...) {
 
+  # Get the type
+  type <- match.arg(type, several.ok = FALSE)
+
   # First get the calibration curve
   calCurveFile <- paste(pathToCalCurves, "/", calCurve, ".rda", sep = "")
   if (!file.exists(calCurveFile)) stop(paste("Calibration curve file", calCurveFile, "not found"))
@@ -84,7 +87,7 @@ unCalibrate <- function(calAges,
 
     # Get extra arguments
     ex <- list(...)
-    if (is.null(ex$method)) ex$method <- "Nelder-Mead" #' SANN'
+    if (is.null(ex$method)) ex$method <- "L-BFGS-B" #' SANN'
 
     # Write function for an optim type command
     opt_fun <- function(pars, samples) {
@@ -123,8 +126,8 @@ unCalibrate <- function(calAges,
       calCurve = calCurve,
       type = "ages"
     )
+    init_sd <- sd(calAges)
     cat("\n")
-    init_sd <- stats::sd(calAges)
 
     # Test function
     # opt_fun(round(c(init_mean, init_sd)), calAges)
@@ -134,9 +137,9 @@ unCalibrate <- function(calAges,
       par = round(c(init_mean, init_sd)),
       fn = opt_fun,
       method = ex$method,
-      samples = calAges
-    ) # ,
-    # lower = c(0,0),
+      samples = calAges,
+      lower = c(-Inf, 1)
+    )
     # upper = c(max(c14BP), 500))
 
     out <- opt_run$par

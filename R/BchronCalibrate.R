@@ -2,12 +2,13 @@
 #'
 #' A fast function for calibrating large numbers of radiocarbon dates involving multiple calibration curves
 #'
-#' @param ages A vector of ages (most likely 14C)
+#' @param ages A vector of ages provided in years before 1950.
 #' @param ageSds A vector of 1-sigma values for the ages given above
 #' @param calCurves A vector of values containing either \code{intcal20}, \code{shcal20}, \code{marine20}, or \code{normal} (older calibration curves are supposed such as intcal13). Should be the same length the number of ages supplied. Non-standard calibration curves can be used provided they are supplied in the same format as those previously mentioned and are placed in the same directory. Normal indicates a normally-distributed (non-14C) age.
 #' @param ids ID names for each age
 #' @param positions Position values (e.g. depths) for each age
 #' @param pathToCalCurves File path to where the calibration curves are located. Defaults to the system directory where the 3 standard calibration curves are stored.
+#' @param allowOutside Whether to allow calibrations to run outside the range of the calibration curve. By default this is turned off as calibrations outside of the range of the calibration curve can cause severe issues with probability ranges of calibrated dates
 #' @param eps Cut-off point for density calculation. A value of eps>0 removes ages from the output which have negligible probability density
 #' @param dfs Degrees-of-freedom values for the t-distribution associated with the calibration calculation. A large value indicates Gaussian distributions assumed for the 14C ages
 #'
@@ -44,6 +45,9 @@
 #' summary(ages1)
 #' plot(ages1)
 #'
+#' # Or plot with Calibration curve
+#' plot(ages1, includeCal = TRUE)
+#'
 #' # Calibrate multiple ages with different calibration curves
 #' ages2 <- BchronCalibrate(
 #'   ages = c(3445, 11553, 7456),
@@ -70,37 +74,40 @@ BchronCalibrate <- function(ages,
                             pathToCalCurves = system.file("data",
                               package = "Bchron"
                             ),
+                            allowOutside = FALSE,
                             eps = 1e-5,
                             dfs = rep(100, length(ages))) {
 
   # This function expects ages in years BP (either 14C or not depending on calCurve values)
   # and positions (usually depths) in cm
-  # It scales these by ageScaleVal and positionScaleVal respectively to calibrate and then
-  # returns them in the original units
 
-  # Check lengths of everything
-  if (length(ages) != length(ageSds)) stop("ages and ageSds should be of same length")
-  if (length(ages) != length(calCurves)) stop("ages and calCurves should be of same length")
-  if (!is.null(positions)) if (length(ages) != length(positions)) stop("ages and positions should be of same length")
+  # Run the Bchron check function in case things have gone wrong
+  BchronCheck(
+    ages = ages,
+    ageSds = ageSds,
+    calCurves = calCurves,
+    ids = ids,
+    positions = positions,
+    pathToCalCurves = pathToCalCurves,
+    eps = eps,
+    dfs = dfs,
+    type = "BchronCalibrate"
+  )
+
+  # If the calCurves argument was not provided print it out
+  if (missing(calCurves)) cat(paste("Calibrating curve not provided. Using:", unique(calCurves), "\n"))
+
+  # Insert ids if NULL
   if (is.null(ids)) ids <- paste("Date", 1:length(ages), sep = "")
-
-  # Check that ages and ageSds are whole numbers (i.e. years)
-  if (!all(as.integer(ages) == ages)) {
-    ages <- round(ages, 0)
-    warning("ages not given as whole numbers - rounding occurred")
-  }
-  if (!all(as.integer(ageSds) == ageSds)) {
-    # Smallest sd is 1
-    ageSds <- pmax(round(ageSds, 0), 1)
-    warning("ageSds not given as whole numbers - rounding occurred")
-  }
+  # Round ages to ensure whole numbers - these will be notified in BchronCheck
+  ages <- round(ages, 0)
+  ageSds <- pmax(round(ageSds, 0), 1)
 
   # Load in all calibration curves specified
   allCalCurves <- unique(calCurves)
   calCurve <- calBP <- c14BP <- calSd <- ageGrid <- mu <- tau1 <- list()
   for (i in 1:length(allCalCurves)) {
     calCurveFile <- paste(pathToCalCurves, "/", allCalCurves[i], ".rda", sep = "")
-    if (!file.exists(calCurveFile)) stop(paste("Calibration curve file", calCurveFile, "not found"))
     x <- load(calCurveFile)
     calCurve <- get(x)
     calBP[[i]] <- calCurve[, 1]
@@ -127,9 +134,11 @@ BchronCalibrate <- function(ages,
   for (i in 1:length(ages)) {
 
     # Get rid of ages outside the range of the uncalibrated dates
-    if (ages[i] > max(mu[[matchCalCurves[i]]]) | ages[i] < min(mu[[matchCalCurves[i]]])) {
-      cal_range <- range(mu[[matchCalCurves[i]]])
-      stop(paste("Date", ids[i], "outside of calibration range. Range of", calCurves[i], "is", cal_range[1], "to", cal_range[2]))
+    if (!allowOutside) {
+      if (ages[i] > max(mu[[matchCalCurves[i]]]) | ages[i] < min(mu[[matchCalCurves[i]]])) {
+        cal_range <- range(mu[[matchCalCurves[i]]])
+        stop(paste0("Date ID ", ids[i], " outside of calibration range. Range of ", calCurves[i], " is ", cal_range[1], " to ", cal_range[2], ". Set allowOutside = TRUE if you want to calibrate ages outside of the calibration curve range"))
+      }
     }
 
     tau <- ageSds[i]^2 + tau1[[matchCalCurves[i]]]^2

@@ -28,7 +28,7 @@ If you find bugs or want to suggest new features please visit the Bchron [GitHub
 
 ## Installing Bchron
 
-Bchron will run in Windows, Mac OS X or Linux. To install Bchron you first need to install [R](https://www.r-project.org). I would also recommend installing [Rstudio](https://rstudio.com) as a nice desktop environment for using R. Once in R you can type:
+Bchron will run in Windows, Mac OS X or Linux. To install Bchron you first need to install [R](https://www.r-project.org). I would also recommend installing [Rstudio](https://www.rstudio.com) as a nice desktop environment for using R. Once in R you can type:
 
 ```{r,eval=FALSE}
 install.packages('Bchron')
@@ -447,8 +447,8 @@ The above un-calibrates the age 2350 BP to the age 2346 14C years BP on the intc
 
 ```{r, results = 'hide'}
 unCal2 = unCalibrate(calAge = c(2350, 4750, 11440),
-                     calCurve = 'intcal20',
-                     type = 'ages')
+                     type = 'ages',
+                     calCurve = 'intcal20')
 ```
 ```{r}
 print(unCal2)

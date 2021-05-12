@@ -242,8 +242,8 @@ print(unCal1)
 
 ## ---- results = 'hide'--------------------------------------------------------
 unCal2 = unCalibrate(calAge = c(2350, 4750, 11440),
-                     calCurve = 'intcal20',
-                     type = 'ages')
+                     type = 'ages',
+                     calCurve = 'intcal20')
 
 ## -----------------------------------------------------------------------------
 print(unCal2)

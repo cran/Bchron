@@ -1,3 +1,15 @@
+# Bchron 4.7.5
+
+  - Added in a BchronCheck function to allow for checking of all argument types using checkmate
+  - Added in positionEps argument to Bchronology to avoid positions being simulated too close to each other and leading to numerical underflow errors
+  - Changed default colours of dates in plot.CalibratedDates and plot.BchronologyRun
+  - Added an extra check that all ageSds are bigger than zero
+  - Allowed the option for calibrating dates out of calibration curve range
+  - Fixed bug that occurred with large 14C values close to upper range of calibration curve
+  - Changed the means by which starting values are created. This was to fix a bug (issue #17 on GitHub) where a middle extreme date (e.g. non-14C) could cause the starting values of the stratigraphically ordered dates to fall beyond the range of the calibration curve. 
+  - Included option to allow bespoke starting values for complex cores
+  - Changed some of the algorithm details to avoid certain bugs with numerical underflow problems (tested in test_all_chrons)
+
 # Bchron 4.7.4
 
   - Updated the BchronDensity and BchronDensityFast functions to show lines on top of dates

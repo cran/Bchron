@@ -15,20 +15,23 @@ Bchronology(
   predictPositions = seq(min(positions), max(positions), length = 100),
   pathToCalCurves = system.file("data", package = "Bchron"),
   jitterPositions = FALSE,
+  allowOutside = FALSE,
   iterations = 10000,
   burn = 2000,
   thin = 8,
   extractDate = 1950 - as.numeric(format(Sys.time(), "\%Y")),
   maxExtrap = 1000,
+  thetaStart = NULL,
   thetaMhSd = 0.5,
   muMhSd = 0.1,
   psiMhSd = 0.1,
   ageScaleVal = 1000,
+  positionEps = 1e-05,
   positionNormalise = TRUE
 )
 }
 \arguments{
-\item{ages}{A vector of ages (most likely 14C)}
+\item{ages}{A vector of ages provided in years before 1950.}
 
 \item{ageSds}{A vector of 1-sigma values for the ages given above}
 
@@ -36,7 +39,7 @@ Bchronology(
 
 \item{positionThicknesses}{Thickness values for each of the positions. The thickness value should be the full thickness value of the slice. By default set to zero.}
 
-\item{calCurves}{A vector of values containing either 'intcal20', 'shcal20', 'marine20', or 'normal' (older calibration curves are also supported, e.g. intcal13). Should be the same length the number of ages supplied. Non-standard calibration curves can be used provided they are supplied in the same format as those previously mentioned and are placed in the same directory, or created via \code{\link{createCalCurve}}. Normal indicates a normally-distributed (non-14C) age.}
+\item{calCurves}{A vector of values containing either \code{intcal20}, \code{shcal20}, \code{marine20}, or \code{normal} (older calibration curves are supposed such as intcal13). Should be the same length the number of ages supplied. Non-standard calibration curves can be used provided they are supplied in the same format as those previously mentioned and are placed in the same directory. Normal indicates a normally-distributed (non-14C) age.}
 
 \item{ids}{ID names for each age}
 
@@ -48,15 +51,19 @@ Bchronology(
 
 \item{jitterPositions}{Whether to jigger the positions at startup or not. Default is FALSE but if there are lots of dates at similar depths this may resolve some initialisation problems}
 
+\item{allowOutside}{Whether to allow calibrations to run outside the range of the calibration curve. By default this is turned off as calibrations outside of the range of the calibration curve can cause severe issues with probability ranges of calibrated dates}
+
 \item{iterations}{The number of iterations to run the procedure for}
 
 \item{burn}{The number of starting iterations to discard}
 
-\item{thin}{The step size for every iteration to keep beyond the burnin}
+\item{thin}{The step size for every iteration to keep beyond the burn-in}
 
 \item{extractDate}{The top age of the core. Used for extrapolation purposes so that no extrapolated ages go beyond the top age of the core. Defaults to the current year}
 
-\item{maxExtrap}{The maximum number of extrapolations to perform before giving up and setting the predicted ages to NA. Useful for when large amounts of extrapolation are required, i.e. some of the predictPositions are a long way from the dated positions}
+\item{maxExtrap}{The maximum number of extrapolations to perform before giving up and setting the predicted ages to NA. Useful for when large amounts of extrapolation are required, i.e. some of the \code{predictPositions} are a long way from the dated positions}
+
+\item{thetaStart}{A set of starting values for the calendar ages estimated by Bchron. If NULL uses a function to estimate the ages. These should be in the same units as the posterior ages required. See example below for usage.}
 
 \item{thetaMhSd}{The Metropolis-Hastings standard deviation for the age parameters}
 
@@ -65,6 +72,8 @@ Bchronology(
 \item{psiMhSd}{The Metropolis-Hastings standard deviation for the Compound Poisson-Gamma scale}
 
 \item{ageScaleVal}{A scale value for the ages. \code{Bchronology} works best when the ages are scaled to be approximately between 0 and 100. The default value is thus 1000 for ages given in years.}
+
+\item{positionEps}{A small value used to check whether simulated positions are far enough apart to avoid numerical underflow errors. If errors occur in model runs (e.g. \code{missing value where TRUE/FALSE needed} increase this value)}
 
 \item{positionNormalise}{Whether to normalise the position values. \code{Bchronology} works best when the positions are normalise to be between 0 and 1 The default value is \code{TRUE}}
 }
@@ -117,6 +126,22 @@ predictAges <- predict(GlenOut,
 
 # Plot the output
 plot(GlenOut, main = "Glendalough", xlab = "Age (cal years BP)", ylab = "Depth (cm)", las = 1)
+
+# If you need to specify your own starting values
+startingAges <- c(0, 2000, 10000, 11000, 13000, 13500)
+GlenOut <- with(
+  Glendalough,
+  Bchronology(
+    ages = ages,
+    ageSds = ageSds,
+    calCurves = calCurves,
+    positions = position,
+    positionThicknesses = thickness,
+    ids = id,
+    predictPositions = seq(0, 1500, by = 10),
+    thetaStart = startingAges
+  )
+)
 }
 
 }
