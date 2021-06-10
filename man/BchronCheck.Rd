@@ -14,7 +14,7 @@ BchronCheck(
   ids = NULL,
   outlierProbs = NULL,
   predictPositions = NULL,
-  jitterPositions = NULL,
+  artificialThickness = NULL,
   allowOutside = NULL,
   iterations = NULL,
   thetaStart = NULL,
@@ -38,7 +38,7 @@ BchronCheck(
 
 \item{ageSds}{A vector of 1-sigma values for the ages given above}
 
-\item{positions}{Position values (e.g. depths) for each age}
+\item{positions}{Position values (e.g. depths) for each age. In the case of layers of non-zero thickness, this should be the middle value of the slice}
 
 \item{pathToCalCurves}{File path to where the calibration curves are located. Defaults to the system directory where the 3 standard calibration curves are stored.}
 
@@ -52,7 +52,7 @@ BchronCheck(
 
 \item{predictPositions}{A vector of positions (e.g. depths) at which predicted age values are required. Defaults to a sequence of length 100 from the top position to the bottom position}
 
-\item{jitterPositions}{Whether to jigger the positions at startup or not. Default is FALSE but if there are lots of dates at similar depths this may resolve some initialisation problems}
+\item{artificialThickness}{Amount to add to the thickness values in the case of equal positions with no \code{positionThicknesses}. Bchron may fail if \code{positionThicknesses} are zero and some positions are repeated. This value is added on to the zero thicknesses (only in the case of repeated positions) to stop this failure.}
 
 \item{allowOutside}{Whether to allow calibrations to run outside the range of the calibration curve. By default this is turned off as calibrations outside of the range of the calibration curve can cause severe issues with probability ranges of calibrated dates}
 
@@ -78,7 +78,7 @@ BchronCheck(
 
 \item{positionEps}{A small value used to check whether simulated positions are far enough apart to avoid numerical underflow errors. If errors occur in model runs (e.g. \code{missing value where TRUE/FALSE needed} increase this value)}
 
-\item{positionNormalise}{Whether to normalise the position values. \code{Bchronology} works best when the positions are normalise to be between 0 and 1 The default value is \code{TRUE}}
+\item{positionNormalise}{Whether to normalise the position values. \code{Bchronology} works best when the positions are normalised to be between 0 and 1 The default value is \code{TRUE}}
 
 \item{eps}{Cut-off point for density calculation. A value of eps>0 removes ages from the output which have negligible probability density}
 

@@ -2,8 +2,8 @@ Package: Bchron
 Type: Package
 Title: Radiocarbon Dating, Age-Depth Modelling, Relative Sea Level Rate
         Estimation, and Non-Parametric Phase Modelling
-Version: 4.7.5
-Date: 2021-05-12
+Version: 4.7.6
+Date: 2021-06-09
 URL: https://andrewcparnell.github.io/Bchron/
 BugReports: https://github.com/andrewcparnell/Bchron/issues
 Depends: R (>= 3.4.0),
@@ -35,7 +35,7 @@ NeedsCompilation: yes
 RoxygenNote: 7.1.1
 Language: en-US
 Config/testthat/edition: 3
-Packaged: 2021-05-12 15:32:22 UTC; andrewparnell
+Packaged: 2021-06-09 16:04:16 UTC; andrewparnell
 Author: Andrew Parnell [cre, aut],
   Nathan McJames [ctb],
   Bruna Wundervald [ctb],
@@ -45,4 +45,4 @@ Author: Andrew Parnell [cre, aut],
   Yong Chen Goh [ctb]
 Maintainer: Andrew Parnell <Andrew.Parnell@mu.ie>
 Repository: CRAN
-Date/Publication: 2021-05-12 16:32:13 UTC
+Date/Publication: 2021-06-10 05:20:02 UTC

@@ -83,6 +83,7 @@ test_that("choosePositions", {
 
 test_that("Bchronology prediction bug", {
   # New test due to weird bug in Bchronology prediction - 13/4/20
+  set.seed(123)
   df <- structure(list(
     age = c(2975, 4270, 4480),
     error = c(60, 70, 60),
@@ -128,4 +129,23 @@ test_that("Test with starting values", {
     )
   ))
   expect_s3_class(GlenOut, "BchronologyRun")
+})
+
+test_that("Non-unique IDs fail", {
+  expect_error(with(
+    Glendalough,
+    Bchronology(
+      ages = ages,
+      ageSds = ageSds,
+      calCurves = calCurves,
+      positions = position,
+      positionThicknesses = thickness,
+      ids = rep("a", nrow(Glendalough)),
+      predictPositions = seq(-10, 1500, by = 10),
+      thetaStart = ages,
+      iterations = 100,
+      burn = 20,
+      thin = 1
+    )
+  ))
 })

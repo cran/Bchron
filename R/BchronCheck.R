@@ -33,7 +33,7 @@ BchronCheck <- function(ages,
                         ids = NULL,
                         outlierProbs = NULL,
                         predictPositions = NULL,
-                        jitterPositions = NULL,
+                        artificialThickness = NULL,
                         allowOutside = NULL,
                         iterations = NULL,
                         thetaStart = NULL,
@@ -77,6 +77,9 @@ BchronCheck <- function(ages,
     assertFileExists(calCurveFile)
   }
 
+  # Check the ids are unique and correct if there
+  assertVector(ids, any.missing = FALSE, len = nObs, null.ok = TRUE, unique = TRUE)
+
   if (type == "Bchronology") {
     # Checks for a full chronology run
 
@@ -84,16 +87,15 @@ BchronCheck <- function(ages,
     assertNumeric(positions, any.missing = FALSE, len = nObs, null.ok = TRUE)
     assertNumeric(positionThicknesses, any.missing = FALSE, len = nObs, null.ok = TRUE)
     assertVector(calCurves, any.missing = FALSE, len = nObs, null.ok = TRUE)
-    assertVector(ids, any.missing = FALSE, len = nObs, null.ok = TRUE)
     assertNumeric(outlierProbs, any.missing = FALSE, len = nObs, null.ok = TRUE, lower = 0, upper = 1)
     assertNumeric(thetaStart, any.missing = FALSE, len = nObs, null.ok = TRUE)
 
     # predictPositions can be any length
-    assertNumeric(predictPositions, any.missing = FALSE, null.ok = TRUE)
+    assertNumeric(predictPositions, any.missing = FALSE, null.ok = FALSE)
 
     # Now some of the other arguments
     assertLogical(positionNormalise, null.ok = TRUE)
-    assertLogical(jitterPositions, null.ok = TRUE)
+    assertNumber(artificialThickness, null.ok = FALSE, lower = .Machine$double.eps)
     assertLogical(allowOutside, null.ok = TRUE)
     assertNumber(iterations, lower = 1, null.ok = TRUE)
     assertNumber(burn, lower = 1, null.ok = TRUE)

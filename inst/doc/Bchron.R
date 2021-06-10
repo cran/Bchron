@@ -180,7 +180,6 @@ data(TestRSLData)
 #                              positionThicknesses = thickness,
 #                              ids = id,
 #                              calCurves = calCurves,
-#                              jitterPositions = TRUE,
 #                              predictPositions = TestRSLData$Depth))
 #  RSLrun = with(TestRSLData,
 #                BchronRSL(RSLchron,
@@ -289,12 +288,18 @@ GlenOut = with(Glendalough,
                            predictPositions=seq(0,1500,by=10)))
 
 ## -----------------------------------------------------------------------------
+library(ggplot2)
+plot(GlenOut) +
+labs(title = "Glendalough",
+     xlab = "Age (cal years BP)",
+     ylab = "Depth (cm)")
+
+## -----------------------------------------------------------------------------
 new_cal = BchronCalibrate(ages = 7000, 
                           ageSds = 40, 
                           calCurve = 'intcal20')
 
 ## -----------------------------------------------------------------------------
-library(ggplot2)
 library(ggridges)
 plot(GlenOut) +
   geom_ridgeline(data = as.data.frame(new_cal$Date1), 
