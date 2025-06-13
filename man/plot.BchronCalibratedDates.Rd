@@ -7,8 +7,8 @@
 \method{plot}{BchronCalibratedDates}(
   x,
   date = NULL,
-  withPositions = ifelse(length(x) > 1 & !is.null(x[[1]]$positions) & !includeCal,
-    TRUE, FALSE),
+  withPositions = ifelse(length(x) > 1 & !is.null(x[[1]]$positions) & !includeCal, TRUE,
+    FALSE),
   includeCal = FALSE,
   dateHeight = 100,
   dateLabels = TRUE,
@@ -53,6 +53,9 @@
 \item{pathToCalCurves}{The Bchron path to calibration curves. Defaults to the package location might need to be set to another folder if user defined calibration curves are being used}
 
 \item{...}{Other arguments to plot (currently ignored)}
+}
+\value{
+A ggplot object containing the plot of the calibrated dates
 }
 \description{
 Plots calibrated radiocarbon dates from a \code{\link{BchronCalibrate}} run. Has options to plot on a position (usually depth) scale if supplied with the original run

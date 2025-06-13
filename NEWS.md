@@ -1,3 +1,9 @@
+# Bchron 4.7.7
+
+  - Added an example for reservoir correction in the vignette
+  - Corrected new email address at UCD
+  - Fixed bugs on the check page. 
+
 # Bchron 4.7.6
 
   - Fixed an example in Bchronology that was adding titles/labels incorrectly

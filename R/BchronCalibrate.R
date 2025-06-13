@@ -21,6 +21,7 @@
 #'
 #'
 #' @return A list of lists where each element corresponds to a single age. Each element contains:
+#' \describe{
 #'  \item{ages}{The original age supplied}
 #'  \item{ageSds}{The original age standard deviation supplied}
 #'  \item{positions}{The position of the age (usually the depth)}
@@ -29,6 +30,7 @@
 #'  \item{densities}{A vector of probability values indicating the probability value for each element in \code{ageGrid}}
 #'  \item{ageLab}{The label given to the age variable}
 #'  \item{positionLab}{The label given to the position variable}
+#' }
 #'
 #' @seealso \code{\link{Bchronology}}, \code{\link{BchronRSL}}, \code{\link{BchronDensity}}, \code{\link{BchronDensityFast}}, \code{\link{createCalCurve}}
 #'
@@ -95,7 +97,7 @@ BchronCalibrate <- function(ages,
   )
 
   # If the calCurves argument was not provided print it out
-  if (missing(calCurves)) cat(paste("Calibrating curve not provided. Using:", unique(calCurves), "\n"))
+  if (missing(calCurves)) message(paste("Calibrating curve not provided. Using:", unique(calCurves), "\n"))
 
   # Insert ids if NULL
   if (is.null(ids)) ids <- paste("Date", 1:length(ages), sep = "")
@@ -149,10 +151,12 @@ BchronCalibrate <- function(ages,
     dens <- dens / sum(dens)
 
     # Create list of output
+    if(length(currAgeGrid[dens > eps]) == 0) warning(paste("Age grid and densities for date", ids[i],"are of length 0. Try reducing the value of argument eps in BchronCalibrate by a factor of 10 \n"))
     if (is.null(positions)) {
       out[[i]] <- list(ages = ages[i], ageSds = ageSds[i], calCurves = calCurves[i], ageGrid = currAgeGrid[dens > eps], densities = dens[dens > eps])
     } else {
       out[[i]] <- list(ages = ages[i], ageSds = ageSds[i], positions = positions[i], calCurves = calCurves[i], ageGrid = currAgeGrid[dens > eps], densities = dens[dens > eps])
+      
     }
   }
 

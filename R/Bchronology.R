@@ -297,7 +297,7 @@ Bchronology <- function(ages,
   }
   do <- order(currPositions)
   diffPosition <- diff(currPositions[do])
-  
+
   # For all dates we need an offset to enable fast lookup
   # The offset will be the same for all if we're using a master ageGrid
   offset <- rep(-min(x.df1[[1]]$ageGrid), length = n)
@@ -497,7 +497,7 @@ Bchronology <- function(ages,
 
   # Main iteration loop -----------------------------------------------------
 
-  cat("Running Bchronology...\n")
+  message("Running Bchronology...\n")
   pb <- utils::txtProgressBar(
     min = 1,
     max = iterations,
@@ -787,6 +787,6 @@ Bchronology <- function(ages,
     inputVals = inputVals
   )
   class(out) <- "BchronologyRun"
-  cat("\nRun completed!\n")
+  message("\nRun completed!\n")
   return(out)
 }

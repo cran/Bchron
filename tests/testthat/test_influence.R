@@ -1,6 +1,6 @@
 set.seed(123)
 library(Bchron)
-co <- function(expr) capture.output(expr, file = "NUL")
+co <- function(expr) capture.output(expr, file = NULL)
 
 test_that("dateInfluence", {
   data(Glendalough)
@@ -79,7 +79,7 @@ test_that("dateInfluence", {
     di6,
     "list"
   )
-  expect_output(coreInfluence(GlenOut_m2,
+  expect_null(coreInfluence(GlenOut_m2,
     GlenOut,
     type = c("max", "plot"),
     xlab = "Age (cal years BP)",
