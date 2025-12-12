@@ -1,13 +1,13 @@
-010af1197d8144541df1687ff3f63388 *DESCRIPTION
+e23f551c8ec0560c26be1c4669cb26f9 *DESCRIPTION
 f5a974d018e101ce270ebdce5f9ad526 *NAMESPACE
-66c3a75eec6b3f6e03a65e49b32fea78 *NEWS.md
+63d0908a0047864b5feb8d5809c726f6 *NEWS.md
 0bece77ba177d16e58a15217fc1f8046 *R/Bchron.R
 c50a933ae2b47231b08719a368d97071 *R/BchronCalibrate.R
 ceab0f4e3f4e87d707ea9170f74929f3 *R/BchronCheck.R
 897d582305e99e64170b5280410284ab *R/BchronDensity.R
 2da9a254bf75802694c05e8da7bcdba2 *R/BchronDensityFast.R
 e10bb8540bdac68a6277e8cf0a68c4e2 *R/BchronRSL.R
-ee5ca6a466cfb44a5e8936c2b84d3d87 *R/Bchronology.R
+409436ba9924b5672a4c833d307929b1 *R/Bchronology.R
 548ff31a6f29d860224edc01a592832a *R/SampleAges.R
 d292d5271dd881d7076ba12cc5ec6313 *R/choosePositions.BchronologyRun.R
 771a42ef6e9e2b09a3586f458cbcff91 *R/coreInfluence.BchronologyRun.R
@@ -15,7 +15,7 @@ d792561b5ca6ec2d3cde495dbc4d612a *R/createCalCurve.R
 66e867f61b2293bb5c221d41162e9514 *R/data.R
 6e550722eb6fe56bb1cdc68cc935fd87 *R/dateInfluence.BchronologyRun.R
 e72d5cee8759bf2c693a35a02102d1d1 *R/hdr.R
-4dd7edf0115e9d4b655852c09a7193b7 *R/plot.BchronCalibratedDates.R
+fe4f499d4ce964ded3c73c1e0f22b185 *R/plot.BchronCalibratedDates.R
 2694ebc77b03f8dcf09c5652c8747474 *R/plot.BchronDensityRun.R
 4264d2d749985144460869991dd8593c *R/plot.BchronDensityRunFast.R
 f267b16741b74afb88d8168999229d3d *R/plot.BchronRSLRun.R
@@ -24,10 +24,10 @@ c55116d58bb3fe23ee97157697bb93d6 *R/predict.BchronologyRun.R
 b709d7b6281c404f83563ac9260f75b6 *R/summary.BchronCalibratedDates.R
 fcf0c4c2a945d80f55a2aebb50d371a2 *R/summary.BchronDensityRun.R
 aad618bf14382d1e20a375eb106e63b8 *R/summary.BchronRSLRun.R
-c5de692c0f39417e9ea584df005c7757 *R/summary.BchronologyRun.R
+4ca7d6c03d9d8306a95bb2838c309718 *R/summary.BchronologyRun.R
 394ad477c93239e7f6a2159f65010cec *R/unCalibrate.R
 16ac458ef52567e8c5ee82eb59d63a6b *R/utils-pipe.R
-9c67043a0f4ee0dab113cec3726ac941 *build/vignette.rds
+1db073d088419896ae60d9a89a6d7f2f *build/vignette.rds
 2d8381ceedf2348f2a949f54cc603720 *data/Glendalough.rda
 088c6328ef04c71845edd32a5c9c468b *data/Sluggan.rda
 01d549b6126e095ada7ddd9131fbf6f5 *data/TestChronData.rda
@@ -40,9 +40,9 @@ c1bb04439617e87a58639e81076b4001 *data/marine20.rda
 77d17068b380f85b6ceacf6caad3e042 *data/shcal13.rda
 dd71cee74bb53e4acb211adfdd40f663 *data/shcal20.rda
 80f62395603b7f91b26b21a47e8b6d94 *inst/CITATION
-56f18bd1e47f0f439cea3e60b4d6ce3a *inst/doc/Bchron.R
-176fc11d56c627b4ee3e34b65da5c034 *inst/doc/Bchron.Rmd
-2e5423ab4919131db25fb091e1bc73a3 *inst/doc/Bchron.html
+8232d55d6e84bb8ba06aeb07c186c459 *inst/doc/Bchron.R
+1285b2ed52470d25a297ccfae384323a *inst/doc/Bchron.Rmd
+90ee55242f8f9525f7f756d0934ac16b *inst/doc/Bchron.html
 3d647ea580cf65ac9322a468ff60a4c6 *inst/extdata/intcal09.14c
 766b7b3a2998cc1f5be8384b531fefc8 *man/Bchron.Rd
 edb0989b9e97fc8ca40d481b6f5bb18e *man/BchronCalibrate.Rd
@@ -78,7 +78,7 @@ bb7ea32e170d3ccec2dd073a86cb9ebb *man/sampleAges.Rd
 1f6d5e047bc19f34f0184259f58a1686 *man/summary.BchronCalibratedDates.Rd
 ac81c87fdbe9e384eb016b81d0c65633 *man/summary.BchronDensityRun.Rd
 9b00ce7af9a90c9dac30b3ae7a42bd40 *man/summary.BchronRSLRun.Rd
-509146afe4a3b45e57724ab08fa0a1a6 *man/summary.BchronologyRun.Rd
+f36328a077065008fc96de0f13f1298f *man/summary.BchronologyRun.Rd
 2bbbd2019faab7f891ba9df2b19a8bf5 *man/unCalibrate.Rd
 f4529d54ec4a895e5fe60d70b43e5521 *src/Bchron.c
 59c99ac2aede429bcf19cedb9ab90ef4 *tests/testthat.R
@@ -90,4 +90,5 @@ a54e4ec99aafe8ebda1a24af39479661 *tests/testthat/test_all_chrons.R
 2f2307bd297b740db7a6d367299832d4 *tests/testthat/test_calibration_curves.R
 a64b2b17a71243983a51e1b76b4f0195 *tests/testthat/test_influence.R
 012651acc64e0e2cee7835f84f9db148 *tests/testthat/test_misc_functions.R
-176fc11d56c627b4ee3e34b65da5c034 *vignettes/Bchron.Rmd
+18dd4b8a400048885fe1eb0571954420 *tests/testthat/test_order.R
+1285b2ed52470d25a297ccfae384323a *vignettes/Bchron.Rmd

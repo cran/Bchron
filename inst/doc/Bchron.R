@@ -300,7 +300,7 @@ data(TestRSLData)
 
 ## ----message=FALSE------------------------------------------------------------
 age_rc <- BchronCalibrate(
-  age = 3000 + 80,
+  age = 3000 - 80,
   ageSds = sqrt(50^2 + 30^2),
   calCurves = "marine20",
   ids = "Res_corr"
